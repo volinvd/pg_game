@@ -1,0 +1,14 @@
+empty  empty      empty      empty      wall       wall           wall       wall       wall       empty      empty      empty      empty
+empty  empty      empty      empty      wall       surface        surface    surface    wall       empty      empty      empty      empty
+empty  empty      empty      empty      wall       surface        surface    surface    wall       empty      empty      empty      empty
+empty  empty      empty      empty      wall       surface        surface    surface    wall       empty      empty      empty      empty
+wall   wall       wall       wall       wall       surface        surface    surface    wall       wall       wall       wall       wall
+wall   surface    surface    surface    surface    surface        surface    surface    surface    surface    surface    surface    wall
+wall   surface    surface    surface    surface    surface        surface    surface    surface    surface    surface    surface    wall
+wall   surface    surface    surface    surface    surface        surface    surface    surface    surface    surface    surface    wall
+wall   surface    surface    surface    surface    surface        surface    surface    surface    surface    surface    surface    wall
+wall   wall       wall       wall       wall       surface        surface    surface    wall       wall       wall       wall       wall
+empty  empty      empty      empty      wall       surface        surface    surface    wall       empty      empty      empty      empty
+empty  empty      empty      empty      wall       surface        surface    surface    wall       empty      empty      empty      empty
+empty  empty      empty      empty      wall       surface        surface    surface    wall       empty      empty      empty      empty
+empty  empty      empty      empty      wall       wall           wall       wall       wall       empty      empty      empty      empty
