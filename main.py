@@ -7,14 +7,19 @@ import program.Enchantment as Enchantment
 
 
 class Cell(pygame.sprite.Sprite):
-    """
-    This object serves as one cell for the canvas,
-    and an image is written into it, serving as the background of this location.
-    """
-
     def __init__(self, position, group, screen_size, size, left):
 
         super().__init__(group)
+
+        """
+        
+        position - номер строки и столбца клетки
+        group - группа спрайтов для отрисовки
+        screen_size - азмер экрана в пикселях, нужен для вычисления размера клетки
+        size - базовый размер клетки
+        left - отстп слева
+        
+        """
 
         self.image = self.load_image('brick.png', 'data/sprites/surface/')
 
@@ -55,6 +60,14 @@ class Cell(pygame.sprite.Sprite):
 
 class Canvas:
     def __init__(self, group):
+
+        """
+
+        переменная group хранит в себе группу спрайтов,
+        к коорой будут добавляться спрайты ячеек.
+
+        """
+
         info = pygame.display.Info()
         self.window_size = info.current_w, info.current_h - 70
         self.opened_in_full_screen = True
@@ -62,6 +75,7 @@ class Canvas:
         self.rect = pygame.Rect(0, 0, info.current_w, info.current_h - 70)
 
         self.cell_sizes = [int((self.window_size[1] + 70) / 7), int(self.window_size[1] / 7)]
+
         self.matrix = [[Cell((i, j), group, (info.current_w, info.current_h),
                              self.cell_sizes[0], 0) for j in range(15)] for i in range(7)]
         self.group = group
