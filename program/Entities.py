@@ -14,7 +14,7 @@ class Unit(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x, self.rect.y = position
 
-        self.speed_by_x, self.speed_by_y = 5, 5
+        self.speed_by_x, self.speed_by_y = 10, 10
 
         self.name = name
         self.health = health
@@ -44,7 +44,7 @@ class Player(Unit):
 
         self.image = self.load_image('player.png', 'data/sprites/entities/Player/')
 
-        koef = round(canvas.cell_sizes[canvas.curr_screen] / 32)
+        koef = round(canvas.cell_sizes[canvas.opened_in_full_screen] / 32)
 
         img_size = self.image.get_rect().size
         self.image = pygame.transform.scale(self.image, (int(img_size[0] * koef), int(img_size[1] * koef)))
@@ -67,7 +67,7 @@ class Player(Unit):
 
         elif keys[pygame.K_s]:
             # проверка на то, выйдет ли персонаж за нижнюю гроницу
-            if self.rect.y + self.speed_by_y + self.rect.h <= 7 * self.canvas.cell_sizes[self.canvas.curr_screen]:
+            if self.rect.y + self.speed_by_y + self.rect.h <= 7 * self.canvas.cell_sizes[self.canvas.opened_in_full_screen]:
                 self.rect = self.rect.move(0, self.speed_by_y)
 
         # передвижение по оси x
@@ -83,7 +83,7 @@ class Player(Unit):
         elif keys[pygame.K_d]:
 
             # переменная, в которой координата правой границы
-            right = len(self.canvas.matrix[0]) * self.canvas.cell_sizes[self.canvas.curr_screen] - \
+            right = len(self.canvas.matrix[0]) * self.canvas.cell_sizes[self.canvas.opened_in_full_screen] - \
                    self.canvas.window_size[0] + self.canvas.left
 
             # проверяем, чо игрок находится по центру (self.padding_x) если нет, то двигаем игрока игаче канвас
@@ -96,4 +96,3 @@ class Player(Unit):
 
 class BaseEnemy(Unit):
     pass
-

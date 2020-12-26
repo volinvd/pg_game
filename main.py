@@ -1,17 +1,70 @@
 import pygame
+import os
 
 import program.Entities as Entities
 import program.Weapons as Weapons
 import program.Enchantment as Enchantment
 
 
+class Cell(pygame.sprite.Sprite):
+    """
+    This object serves as one cell for the canvas,
+    and an image is written into it, serving as the background of this location.
+    """
+
+    def __init__(self, position, group, screen_size, size, left):
+
+        super().__init__(group)
+
+        self.image = self.load_image('brick.png', 'data/sprites/surface/')
+
+        self.image = pygame.transform.scale(self.image, (size, size))
+
+        self.rect = self.image.get_rect()
+
+        self.rect.x = size * position[1]
+        self.rect.y = size * position[0]
+
+        self.position = position
+        self.left = left
+
+        self.screen_size = screen_size
+
+    def load_image(self, name, directory, color_key=None):
+
+        fullname = os.path.join(directory, name)
+
+        image = pygame.image.load(fullname)
+
+        if color_key is not None:
+            if color_key == -1:
+                color_key = image.get_at((0, 0))
+            image.set_colorkey(color_key)
+        else:
+            image = image
+        return image
+
+    def set_size(self, size):
+        self.image = pygame.transform.scale(self.image, (size, size))
+
+        self.rect = self.image.get_rect()
+
+        self.rect.x = size * self.position[1] + self.left
+        self.rect.y = size * self.position[0]
+
+
 class Canvas:
-    def __init__(self):
+    def __init__(self, group):
         info = pygame.display.Info()
         self.window_size = info.current_w, info.current_h - 70
         self.opened_in_full_screen = True
+
+        self.rect = pygame.Rect(0, 0, info.current_w, info.current_h - 70)
+
         self.cell_sizes = [int((self.window_size[1] + 70) / 7), int(self.window_size[1] / 7)]
-        self.matrix = [[0] * 15 for _ in range(7)]
+        self.matrix = [[Cell((i, j), group, (info.current_w, info.current_h),
+                             self.cell_sizes[0], 0) for j in range(15)] for i in range(7)]
+        self.group = group
 
         self.left = 0
 
@@ -31,6 +84,7 @@ class Canvas:
         :return:
         """
         self.opened_in_full_screen = not self.opened_in_full_screen
+        self.set_cell_size(self.cell_sizes[self.opened_in_full_screen])
         if action == 'window_size':
             pygame.quit()
             pygame.init()
@@ -44,20 +98,26 @@ class Canvas:
                 return pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
 
     def render(self, screen):
-        cell_size = self.cell_sizes[self.opened_in_full_screen]
+        pass
+
+    def set_cell_size(self, size):
+        self.group = pygame.sprite.Group()
         for x in range(len(self.matrix)):
             for y in range(len(self.matrix[x])):
-                pygame.draw.rect(screen, 'black', (y * cell_size + 3 + self.left, x * cell_size,
-                                                   cell_size, cell_size), 3)
+                self.matrix[x][y].set_size(size)
 
     def change_left_padding(self, left):
         self.left += left
+        for x in range(len(self.matrix)):
+            for y in range(len(self.matrix[x])):
+                self.matrix[x][y].rect.x += left
 
 
 def main():
     pygame.init()
 
-    canvas = Canvas()
+    ground = pygame.sprite.Group()
+    canvas = Canvas(ground)
     screen = canvas.set_screen("change_size_type")
 
     player_sprite_group = pygame.sprite.Group()
@@ -81,7 +141,10 @@ def main():
 
         screen.fill((200, 200, 200))
         canvas.render(screen)
+
+        ground.draw(screen)
         player_sprite_group.draw(screen)
+
         pygame.display.flip()
     pygame.quit()
 
