@@ -35,15 +35,18 @@ class Canvas:
         self.pet_sprites = pygame.sprite.Group()
         self.enemy_sprites = pygame.sprite.Group()
 
-        self.players = []
+        self.left_padding, self.top_padding = 0, 0
+
+        self.players = [Entities.Player((self.window_size[0] // 2, self.window_size[1] // 2),
+                                        'Player', 100, self.player_sprites)]
+
         self.enemies = []
         self.pets = []
 
     def get_field(self, file_name, directory):
 
         """
-        Функция обрабатывает файл с именем file_name в дирректории directory
-        И возвращает матрицу, состоящую из объектов класса Cell.
+        Будем использовать для хранения объектов, в том числе и стен
         """
 
         fullname = os.path.join(directory, file_name)
@@ -99,26 +102,29 @@ class Canvas:
                     tile = self.level_maps[self.current_level - 1].get_tile_image_by_gid(gid)
                     if tile is not None:
                         tile = pygame.transform.scale(tile, (self.tile_width, self.tile_width))
-                        self.screen.blit(tile, (x * self.tile_width, y * self.tile_width))
+                        self.screen.blit(tile, (x * self.tile_width + self.left_padding,
+                                                y * self.tile_width + self.top_padding))
 
-    def change_left_padding(self, left=0, top=0):
+        self.player_sprites.draw(self.screen)
+        self.pet_sprites.draw(self.screen)
+        self.enemy_sprites.draw(self.screen)
+
+    def change_padding(self, left=0, top=0):
 
         """
         эта функция сдвигает все клетки по оси x на left или по оси y на top
         """
 
-        for x in range(len(self.field)):
-            for y in range(len(self.field[x])):
-                self.field[x][y].rect.x += left
-                self.field[x][y].rect.y += top
+        self.left_padding += left
+        self.top_padding += top
 
 
 def main():
     pygame.init()
 
     canvas = Canvas()
-
     running = True
+
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -129,6 +135,16 @@ def main():
 
             if event.type == pygame.KEYUP and event.key == pygame.K_ESCAPE:
                 canvas.screen = canvas.set_screen("window_size")
+
+        keys = pygame.key.get_pressed()
+        if keys:
+            """
+            Если есть нажатые клавиши, вызывается передвижения метод игрока
+            Он возвращает перемещения по оси x и y
+            Потом мы сдвигаем канвас на эти значения
+            """
+            left, top = canvas.players[0].move_on_wasd(keys)
+            canvas.change_padding(left, top)
 
         canvas.screen.fill((200, 200, 200))
         canvas.render()
