@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.4" tiledversion="1.4.3" orientation="orthogonal" renderorder="right-down" width="50" height="30" tilewidth="16" tileheight="16" infinite="0" nextlayerid="6" nextobjectid="35">
+ <tileset firstgid="1" name="goblinhouse" tilewidth="16" tileheight="16" tilecount="135" columns="9">
+  <image source="../sprites/spritesheets/goblinhouse.png" width="150" height="250"/>
+ </tileset>
+ <tileset firstgid="136" name="Titleset_Doungeon" tilewidth="16" tileheight="16" tilecount="90" columns="10">
+  <image source="../sprites/spritesheets/Titleset_Doungeon.png" width="160" height="144"/>
+ </tileset>
+ <layer id="1" name="Слой тайлов 1" width="50" height="30">
+  <data encoding="base64" compression="zlib">
+   eJztmLESgCAIQFlay621+nF/tRq687pMUAi4HN7mJQ9R0ggAsWOW8WBqQDv+i6ERK66tHhi6R/egsj4QFDyWTCxYMPn5woOT9Az37KG5P7Q9MH04OPCwdOaVYnrLtUWPtA489qCWepHwoP77WvQA5m+n48785PqoxHpQPXLrtN3GzQxzatY0xkPivqbhwQ0IetTemWv7ODW+3N6l9DfOfVHr8UWN1nhwvpVoenBSyoEXD64a1o7zLx7e3iul2AGcYD9Y
+  </data>
+ </layer>
+ <objectgroup id="2" name="Слой объектов 1"/>
+ <layer id="3" name="Слой тайлов 2" width="50" height="30">
+  <data encoding="base64" compression="zlib">
+   eJztmDsOwjAQRA10QAcIIQHHoIcSGg5AQUNBQ0HD7/JMJGistdfr+BNLftIo0SZ4duLEEVGqUhIbYW0esRcJofrInZXz6EF9aBDRIwScxxAaQeOIHiGoHkotEnjkRM9XYg5q3Soth6nfEnMcDXUb1By6HIuFz3y4zJXrehIKW0/6dZW861PnaMsEmkIzrZ4rh6/vElpB6wDjnX7b/7yfLeea7onQ1086XtPXRatdmfPb+sZ4Ppoxb1rtzvzG9PxKPDl8cjygJ/SC3tBHOEYXKO29ayJmDtv/xS20I/Z9keTg7lnJWHvoQOz7rnu5cvh6pECag/oO0IUcHHpO6jtAiTkoao5Kar7yShDI
+  </data>
+ </layer>
+ <objectgroup id="4" name="Слой объектов 2">
+  <object id="13" gid="52" x="208" y="96" width="16" height="16"/>
+  <object id="14" gid="43" x="208" y="80" width="16" height="16"/>
+  <object id="15" gid="42" x="192" y="80" width="16" height="16"/>
+  <object id="16" gid="51" x="192" y="96" width="16" height="16"/>
+  <object id="17" gid="68" x="688" y="224" width="16" height="16"/>
+  <object id="18" gid="77" x="688" y="240" width="16" height="16"/>
+  <object id="19" gid="76" x="592.5" y="289.188" width="16" height="16"/>
+  <object id="20" gid="67" x="592.533" y="273.156" width="16" height="16"/>
+  <object id="21" gid="107" x="240" y="340" width="16" height="16"/>
+  <object id="22" gid="106" x="224" y="340" width="16" height="16"/>
+  <object id="23" gid="98" x="240" y="324" width="16" height="16"/>
+  <object id="24" gid="97" x="224" y="324" width="16" height="16"/>
+  <object id="25" gid="83" x="239.75" y="273.875" width="16" height="16"/>
+  <object id="26" gid="83" x="207.75" y="274" width="16" height="16"/>
+ </objectgroup>
+ <layer id="5" name="Слой тайлов 3" width="50" height="30">
+  <data encoding="base64" compression="zlib">
+   eJztmE0OAiEMhXsGt17TrXdgOxtZc0tDYpPaUKaU8jPGLyETRaDPV2AA4BqE1QH8ETk+zwDfPq30LHW05XFfQUf24CxOWn+3hWOmRUftc2aVHwn68oprWZ1XySmGHXSccUA5lyh8/ZrFiDFbtOyeA7TvVCgB/LwL7OkJ9klzFuMu6ZK0Ig9DDJY2JTBmqa7mR2L1T8P4mjY3ZV/WNT2306wrM4jQpwPLDC3SGDSOnr5Rx+y1nM9vDy0j/cD5wcdBHZhTqGHGO2OvZ6X/q9cHC7370S46vKF7Xea1MBYttTMI9WP2maqVEWcp7R7rMUZtLfyl+yGNlujUjxf8DiiSIkHrAsjvjRYdmrlYy116DuCaKPS7lvsXj99J8L1c6i9C2Sft3sU9o+12mY/8PlLKM88zZI03HaFqKw==
+  </data>
+ </layer>
+</map>
