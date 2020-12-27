@@ -1,87 +1,40 @@
 import pygame
 import os
+import pytmx
 
 import program.Entities as Entities
 import program.Weapons as Weapons
 import program.Enchantment as Enchantment
 
 
-class Cell(pygame.sprite.Sprite):
-    def __init__(self, position, size, cell_type, sprite_group):
-
-        super().__init__(sprite_group)
-
-        """
-        position - номер строки и столбца клетки
-        sprite_group - группа спрайтов для отрисовки
-        cell_type - тип клетки
-        size - базовый размер клетки
-        """
-
-        # находим какую картинку необходимо загрузить (в зависимости от типа ячейки)
-        if cell_type == 'surface':
-            self.image = self.load_image('brick.png', 'data/sprites/surface/')
-            self.image = pygame.transform.scale(self.image, (size, size))
-            self.rect = self.image.get_rect()
-
-        elif cell_type == 'wall':
-            self.image = pygame.Surface((size, size))
-            pygame.draw.rect(self.image, pygame.Color("white"), [size * position[1], size * position[0],
-                                                                 size, size])
-            self.rect = pygame.Rect(size * position[1], size * position[0], size, size)
-
-        elif cell_type == 'empty':
-            self.image = pygame.Surface((size, size), pygame.SRCALPHA)
-            pygame.draw.rect(self.image, pygame.Color((200, 200, 200)), [size * position[1], size * position[0],
-                                                                         size, size])
-            self.rect = pygame.Rect(size * position[1], size * position[0], size, size)
-
-        # ставим на позицию
-        self.rect.x = size * position[1]
-        self.rect.y = size * position[0]
-        self.position = position
-
-    def load_image(self, name, directory, color_key=None):
-
-        fullname = os.path.join(directory, name)
-        image = pygame.image.load(fullname)
-
-        if color_key is not None:
-            if color_key == -1:
-                color_key = image.get_at((0, 0))
-            image.set_colorkey(color_key)
-        else:
-            image = image
-        return image
-
-
 class Canvas:
     def __init__(self):
 
-        # получаем инфу о экране пользователя
+        """
+        info - переменная, хранящая информацию о экране пользователя
+        self.screen - главный экран для отрисоки
+        self.filename_of_maps - список, в котором хранятся пути к файлам карт
+        self.level_maps - список, в котором хранятся все уровни
+        self.sizes - размеры уровня в клетках по x и y
+        self.current_level - переменная, хранящая порядковый номер текущего уровня
+        """
+
         info = pygame.display.Info()
         self.window_size = info.current_w, info.current_h
         self.opened_in_full_screen = True
 
-        # создаем размер клетки (полноэкранный режим)
-        self.cell_size = int((self.window_size[1]) / 8)
+        self.screen = self.set_screen("change_size_type")
+        self.filename_of_maps = ['data/maps/gob.tmx']
+        self.level_maps = [pytmx.load_pygame(file_name) for file_name in self.filename_of_maps]
+        self.sizes = [[level_map.height, level_map.width] for level_map in self.level_maps]
+        self.current_level = 1
 
-        # группы спрайтов для поверхности (плоскость/сткны и пустые клетки)
-        self.air_sprites = pygame.sprite.Group()
-        self.surface_sprites = pygame.sprite.Group()
-        self.wall_sprites = pygame.sprite.Group()
+        self.tile_width = 100
 
         self.player_sprites = pygame.sprite.Group()
         self.pet_sprites = pygame.sprite.Group()
         self.enemy_sprites = pygame.sprite.Group()
 
-        # словарь соответствия типов клеток с их группами
-        self.dictionary_of_cell_group = {'empty': self.air_sprites,
-                                         'surface': self.surface_sprites,
-                                         'wall': self.wall_sprites}
-
-        # читаем уровень из файла
-        self.field = self.get_field('first_level.txt', 'data/levels/')
         self.players = []
         self.enemies = []
         self.pets = []
@@ -130,19 +83,23 @@ class Canvas:
             else:
                 return pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
 
-    def render(self, screen):
-
+    def render(self):
         """
-        эта функция отрисовывает все спрайты на screen
+        Пробегается по видимым слоям текущего уровня и отрисовывает их на экране
         """
 
-        self.air_sprites.draw(screen)
-        self.surface_sprites.draw(screen)
-        self.wall_sprites.draw(screen)
+        for layer in self.level_maps[self.current_level - 1].visible_layers:
+            if layer.__class__.__name__ == 'TiledTileLayer':
+                for x, y, gid in layer:
 
-        self.player_sprites.draw(screen)
-        self.pet_sprites.draw(screen)
-        self.enemy_sprites.draw(screen)
+                    """
+                    layer - картеж вида (0, 0, 0), где первые 2 числа координаты по x и y, 
+                    последняя индекс слоя, на котором мы и находим картинку
+                    """
+                    tile = self.level_maps[self.current_level - 1].get_tile_image_by_gid(gid)
+                    if tile is not None:
+                        tile = pygame.transform.scale(tile, (self.tile_width, self.tile_width))
+                        self.screen.blit(tile, (x * self.tile_width, y * self.tile_width))
 
     def change_left_padding(self, left=0, top=0):
 
@@ -160,7 +117,6 @@ def main():
     pygame.init()
 
     canvas = Canvas()
-    screen = canvas.set_screen("change_size_type")
 
     running = True
     while running:
@@ -169,13 +125,13 @@ def main():
                 running = False
 
             if event.type == pygame.KEYUP and event.key == pygame.K_F11:
-                screen = canvas.set_screen("change_size_type")
+                canvas.screen = canvas.set_screen("change_size_type")
 
             if event.type == pygame.KEYUP and event.key == pygame.K_ESCAPE:
-                screen = canvas.set_screen("window_size")
+                canvas.screen = canvas.set_screen("window_size")
 
-        screen.fill((200, 200, 200))
-        canvas.render(screen)
+        canvas.screen.fill((200, 200, 200))
+        canvas.render()
         pygame.display.flip()
     pygame.quit()
 
