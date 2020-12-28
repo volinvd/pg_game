@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.4" tiledversion="1.4.3" orientation="orthogonal" renderorder="right-down" width="50" height="30" tilewidth="16" tileheight="16" infinite="0" nextlayerid="6" nextobjectid="35">
+<map version="1.4" tiledversion="1.4.3" orientation="orthogonal" renderorder="right-down" width="50" height="30" tilewidth="16" tileheight="16" infinite="0" nextlayerid="10" nextobjectid="96">
  <tileset firstgid="1" name="goblinhouse" tilewidth="16" tileheight="16" tilecount="135" columns="9">
   <image source="../sprites/spritesheets/goblinhouse.png" width="150" height="250"/>
  </tileset>
@@ -8,13 +8,48 @@
  </tileset>
  <layer id="1" name="Слой тайлов 1" width="50" height="30">
   <data encoding="base64" compression="zlib">
-   eJztmLESgCAIQFlay621+nF/tRq687pMUAi4HN7mJQ9R0ggAsWOW8WBqQDv+i6ERK66tHhi6R/egsj4QFDyWTCxYMPn5woOT9Az37KG5P7Q9MH04OPCwdOaVYnrLtUWPtA489qCWepHwoP77WvQA5m+n48785PqoxHpQPXLrtN3GzQxzatY0xkPivqbhwQ0IetTemWv7ODW+3N6l9DfOfVHr8UWN1nhwvpVoenBSyoEXD64a1o7zLx7e3iul2AGcYD9Y
+   eJztmDEOgDAIAFlc1SeoH+9X1cGkgygUEIgdbjPKAS22BQBKJyzjwSTAO/6LQUgUV6kHhe7RPbisN8wOHgsSCxVKfr7w0KTewzN7eK4Pbw/KHJ4TeETa895iesp1RI+6DzLOIEm/WHhw/30jeoDyu+vnzvxgc9SiHlwPrE5bo6+Xh0YMFuc1Dw9twNCj9czcOse58WFrlzPfLGqp+Q1PD827koxrqyUnWTy0etg7zr94ZLuvtGIHloNA8A==
   </data>
  </layer>
- <objectgroup id="2" name="Слой объектов 1"/>
+ <objectgroup id="2" name="Слой объектов 1">
+  <object id="52" name="solid" x="112" y="255.5" width="4.75" height="144.25"/>
+  <object id="55" name="solid" x="117.5" y="383.5" width="186.5" height="16"/>
+  <object id="57" name="solid" x="299" y="352.5" width="4.5" height="30"/>
+  <object id="58" name="solid" x="303.5" y="255.5" width="5.5" height="48.5"/>
+  <object id="59" name="solid" x="117" y="255.333" width="186.333" height="16.6667"/>
+  <object id="60" name="solid" x="309.5" y="288.25" width="106" height="15.5"/>
+  <object id="61" name="solid" x="304" y="351.5" width="111.5" height="16.5"/>
+  <object id="62" name="solid" x="410.75" y="228.5" width="4.75" height="59.5"/>
+  <object id="63" name="solid" x="415.75" y="351.25" width="5.25" height="48"/>
+  <object id="64" name="solid" x="415.667" y="400.333" width="127.667" height="14.6667"/>
+  <object id="65" name="solid" x="544.333" y="400" width="4.66667" height="47.3333"/>
+  <object id="67" name="solid" x="544" y="448.667" width="159.667" height="15.3333"/>
+  <object id="68" name="solid" x="698.667" y="336.121" width="5.33333" height="112.212"/>
+  <object id="71" name="solid" x="463.5" y="336.5" width="234.5" height="14"/>
+  <object id="72" name="solid" x="598" y="339.273" width="19.8182" height="26.5455"/>
+  <object id="74" name="solid" x="646.182" y="339.273" width="19.4545" height="26.1818"/>
+  <object id="75" name="solid" x="463.667" y="271.758" width="4.66667" height="63.5758"/>
+  <object id="77" name="solid" x="469" y="271.667" width="106.333" height="15.3333"/>
+  <object id="78" name="solid" x="576" y="272" width="5" height="32"/>
+  <object id="79" name="solid" x="575.667" y="304" width="160" height="15.6667"/>
+  <object id="80" name="solid" x="730.667" y="175.667" width="4.66667" height="127.667"/>
+  <object id="81" name="solid" x="580.333" y="175.333" width="150" height="16"/>
+  <object id="82" name="solid" x="575.333" y="175" width="4.66667" height="48.3333"/>
+  <object id="83" name="solid" x="464" y="207.667" width="111" height="15.6667"/>
+  <object id="84" name="solid" x="367.333" y="223.667" width="43" height="16"/>
+  <object id="85" name="solid" x="368" y="143.667" width="4.33333" height="79"/>
+  <object id="86" name="solid" x="373" y="143.333" width="42.3333" height="16.3333"/>
+  <object id="87" name="solid" x="464.333" y="47.6667" width="4" height="159.333"/>
+  <object id="88" name="solid" x="410.333" y="111.667" width="5.66667" height="31.6667"/>
+  <object id="89" name="solid" x="314.667" y="112" width="95.3333" height="15.6667"/>
+  <object id="92" name="solid" x="64.3333" y="128.333" width="255" height="15"/>
+  <object id="93" name="solid" x="63.5" y="32" width="5.5" height="96.5"/>
+  <object id="94" name="solid" x="69.3333" y="32" width="255.333" height="16"/>
+  <object id="95" name="solid" x="320.333" y="48.3333" width="143.667" height="15.3333"/>
+ </objectgroup>
  <layer id="3" name="Слой тайлов 2" width="50" height="30">
   <data encoding="base64" compression="zlib">
-   eJztmDsOwjAQRA10QAcIIQHHoIcSGg5AQUNBQ0HD7/JMJGistdfr+BNLftIo0SZ4duLEEVGqUhIbYW0esRcJofrInZXz6EF9aBDRIwScxxAaQeOIHiGoHkotEnjkRM9XYg5q3Soth6nfEnMcDXUb1By6HIuFz3y4zJXrehIKW0/6dZW861PnaMsEmkIzrZ4rh6/vElpB6wDjnX7b/7yfLeea7onQ1086XtPXRatdmfPb+sZ4Ppoxb1rtzvzG9PxKPDl8cjygJ/SC3tBHOEYXKO29ayJmDtv/xS20I/Z9keTg7lnJWHvoQOz7rnu5cvh6pECag/oO0IUcHHpO6jtAiTkoao5Kar7yShDI
+   eJztmDsOwjAQRA10QAcIIQHHoIcSGg5AQUNBQ0HD7/KMJWistTfr+IORnzRKtEl2PHFiRJSqlMRKWJtGHIuEUOPInZXz6EBdqBfRIwScRx8aQMOIHiGoHkrNEnjkxMxXYg5q3Soth228JebYW+ouqDlsciwWPvPRZK6ariehcI3JvK+S3/rUOdoygsbQxKjnyuHrO4cW0DJAv8Nn+533o+Nc2zMR+v5J++lxnYzamTm/rW+M90P3vBi1K3ON7f01+7o8OXxy3KA79ICe0EvYw9Y3JbH8/iWHxvV/cQ1tiH1fJDm4Z1bSawvtiH3fdS9XDl+PFEhzUN8BfiEHh5mT+g5QYg6KmqOSmjckKxEN
   </data>
  </layer>
  <objectgroup id="4" name="Слой объектов 2">

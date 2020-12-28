@@ -67,7 +67,7 @@ class Player(Entity):
                                  MyImage((x + 10, y + h, w - 10, 10)),
                                  MyImage((x, y + 10, 10, h - 10))]
 
-    def move_on_wasd(self, keys):
+    def move_on_wasd(self, keys, level_walls):
 
         """
         flag = True
@@ -86,34 +86,38 @@ class Player(Entity):
         y = x = 0
         if keys[pygame.K_w]:
             flag = True
-            '''for obstacle in self.obstacles:
-                if pygame.sprite.spritecollide(self.collision_images[0], obstacle, False):
-                    flag = False'''
+            for wall_group in level_walls:
+                for wall in wall_group:
+                    if pygame.sprite.collide_rect(self.collision_images[0], wall):
+                        flag = False
             if flag:
                 y = self.speed_by_y
 
         elif keys[pygame.K_s]:
             flag = True
-            '''for obstacle in self.obstacles:
-                if pygame.sprite.spritecollide(self.collision_images[2], obstacle, False):
-                    flag = False'''
+            for wall_group in level_walls:
+                for wall in wall_group:
+                    if pygame.sprite.collide_rect(self.collision_images[2], wall):
+                        flag = False
             if flag:
                 y = -self.speed_by_y
 
         # передвижение по оси x
         if keys[pygame.K_a]:
             flag = True
-            '''for obstacle in self.obstacles:
-                if pygame.sprite.spritecollide(self.collision_images[3], obstacle, False):
-                    flag = False'''
+            for wall_group in level_walls:
+                for wall in wall_group:
+                    if pygame.sprite.collide_rect(self.collision_images[3], wall):
+                        flag = False
             if flag:
                 x = self.speed_by_x
 
         elif keys[pygame.K_d]:
             flag = True
-            '''for obstacle in self.obstacles:
-                if pygame.sprite.spritecollide(self.collision_images[1], obstacle, False):
-                    flag = False'''
+            for wall_group in level_walls:
+                for wall in wall_group:
+                    if pygame.sprite.collide_rect(self.collision_images[1], wall):
+                        flag = False
             if flag:
                 x = -self.speed_by_x
         return x, y
