@@ -17,8 +17,9 @@ class Canvas:
         self.level_maps - список, в котором хранятся все уровни
         self.sizes - размеры уровня в клетках по x и y
         self.current_level - переменная, хранящая порядковый номер текущего уровня
-        self.dictionary_of_levels_walls - словарь, ключем которого является порядковый номер уровня
-        а значением по ключу является список стен, которые берутся из групп объектов с именем wall
+        self.dictionary_of_levels_objects - словарь, ключем которого является порядковый номер уровня
+        а значением по ключу является список объектов, которые берутся из групп объектов карты
+        self.dictionary_of_types - словарь, который возвращает класс в зависимости от имени объекта
         """
 
         info = pygame.display.Info()
@@ -42,10 +43,22 @@ class Canvas:
         self.players = [Entities.Player((self.window_size[0] // 2, self.window_size[1] // 2),
                                         'Player', 100, self.player_sprites)]
 
-        self.dictionary_of_levels_walls = \
+        self.dictionary_of_types = \
             {
-                1: [[Wall(obj, self.tile_width, self.level_maps[0].tilewidth)
-                     for obj in object_groups if obj.name == 'wall']
+                'wall': Wall,
+                'table': Table,
+                'armor': Armor,
+                'stool': Stool,
+                'cupboard': Cupboard,
+                'stairs': Stairs,
+                'bed': Bed,
+                'decorative_ax': DecorativeAx,
+            }
+
+        self.dictionary_of_levels_objects = \
+            {
+                1: [[self.dictionary_of_types[obj.name](obj, self.tile_width, self.level_maps[0].tilewidth)
+                     for obj in object_groups if self.dictionary_of_types[obj.name]]
                     for object_groups in self.level_maps[0].objectgroups],
 
                 2: []
@@ -64,7 +77,7 @@ class Canvas:
         """
 
         if keys is not None:
-            left, top = self.players[0].move_on_wasd(keys, self.dictionary_of_levels_walls[1])
+            left, top = self.players[0].move_on_wasd(keys, self.dictionary_of_levels_objects[1])
             self.change_padding(left, top)
         if mouse is not None:
             pass
@@ -115,7 +128,7 @@ class Canvas:
                     if tile is not None:
                         tile = pygame.transform.scale(tile, (self.tile_width, self.tile_width))
                         screen.blit(tile, (x * self.tile_width + self.left_padding,
-                                                y * self.tile_width + self.top_padding))
+                                           y * self.tile_width + self.top_padding))
 
         self.player_sprites.draw(screen)
         self.pet_sprites.draw(screen)
@@ -132,13 +145,13 @@ class Canvas:
         self.top_padding += top
 
         # пробегаемся по объектам Wall, и изменяем его положение в зависимости от переданных параметров
-        for walls_group in self.dictionary_of_levels_walls[1]:
+        for walls_group in self.dictionary_of_levels_objects[1]:
             for wall in walls_group:
                 wall.rect.x += left
                 wall.rect.y += top
 
 
-class Wall:
+class Obstacle:
     def __init__(self, obj, tile_size, base_tile_width):
 
         """
@@ -157,4 +170,37 @@ class Wall:
         self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
 
         self.image = pygame.Surface((self.width, self.height), pygame.SRCALPHA)
+
+
+class Wall(Obstacle):
+    pass
+
+
+class Table(Obstacle):
+    pass
+
+
+class Armor(Obstacle):
+    pass
+
+
+class Stool(Obstacle):
+    pass
+
+
+class Cupboard(Obstacle):
+    pass
+
+
+class Stairs(Obstacle):
+    pass
+
+
+class Bed(Obstacle):
+    pass
+
+
+class DecorativeAx(Obstacle):
+    pass
+
 

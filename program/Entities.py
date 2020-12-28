@@ -2,7 +2,7 @@ import pygame
 import os
 
 
-class MyImage(pygame.sprite.Sprite):
+class CollisionImage(pygame.sprite.Sprite):
     def __init__(self, size):
         super().__init__()
         self.image = pygame.Surface((size[2], size[3]), pygame.SRCALPHA)
@@ -23,7 +23,7 @@ class Entity(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x, self.rect.y = position
 
-        self.speed_by_x, self.speed_by_y = 10, 10
+        self.speed_by_x, self.speed_by_y = 7, 7
 
         self.name = name
         self.health = health
@@ -62,18 +62,19 @@ class Player(Entity):
         x, y, w, h = self.rect.x, self.rect.y, self.rect.w, self.rect.h
 
         # список стен вокруг персонажа
-        self.collision_images = [MyImage((x + 10, y, w - 10, 10)),
-                                 MyImage((x + w, y + 10, 10, h - 10)),
-                                 MyImage((x + 10, y + h, w - 10, 10)),
-                                 MyImage((x, y + 10, 10, h - 10))]
+        self.collision_images = [CollisionImage((x + 10, y, w - 10, 10)),
+                                 CollisionImage((x + w, y + 10, 10, h - 10)),
+                                 CollisionImage((x + 10, y + h, w - 10, 10)),
+                                 CollisionImage((x, y + 10, 10, h - 10))]
 
     def move_on_wasd(self, keys, level_walls):
 
         """
         flag = True
-        for obstacle in self.obstacles:
-            if pygame.sprite.spritecollide(self.collision_images[0], obstacle, False):
-                flag = False
+        for wall_group in level_walls:
+            for wall in wall_group:
+                if pygame.sprite.collide_rect(self.collision_images[0], wall):
+                    flag = False
         if flag:
             ...
         этот однообразный код при ходьбе проверяет столкновение
