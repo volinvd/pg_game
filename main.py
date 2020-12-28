@@ -28,7 +28,7 @@ def main():
             Он возвращает перемещения по оси x и y
             Потом мы сдвигаем канвас на эти значения
             """
-            canvas.update_player_coord(keys)
+            canvas.update_player_coord(keys=keys)
 
         canvas.screen.fill((200, 200, 200))
         canvas.render()

@@ -23,7 +23,7 @@ class Entity(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x, self.rect.y = position
 
-        self.speed_by_x, self.speed_by_y = 7, 7
+        self.speed_by_x, self.speed_by_y = 10, 10
 
         self.name = name
         self.health = health

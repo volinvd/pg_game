@@ -17,6 +17,8 @@ class Canvas:
         self.level_maps - список, в котором хранятся все уровни
         self.sizes - размеры уровня в клетках по x и y
         self.current_level - переменная, хранящая порядковый номер текущего уровня
+        self.dictionary_of_levels_walls - словарь, ключем которого является порядковый номер уровня
+        а значением по ключу является список стен, которые берутся из групп объектов с именем wall
         """
 
         info = pygame.display.Info()
@@ -34,7 +36,6 @@ class Canvas:
         self.player_sprites = pygame.sprite.Group()
         self.pet_sprites = pygame.sprite.Group()
         self.enemy_sprites = pygame.sprite.Group()
-        self.walls = pygame.sprite.Group()
 
         self.left_padding, self.top_padding = 0, 0
 
@@ -43,7 +44,8 @@ class Canvas:
 
         self.dictionary_of_levels_walls = \
             {
-                1: [[Wall(obj, self.tile_width, self.level_maps[0].tilewidth, self.walls) for obj in object_groups if obj.name == 'solid']
+                1: [[Wall(obj, self.tile_width, self.level_maps[0].tilewidth)
+                     for obj in object_groups if obj.name == 'wall']
                     for object_groups in self.level_maps[0].objectgroups],
 
                 2: []
@@ -52,24 +54,20 @@ class Canvas:
         self.enemies = []
         self.pets = []
 
-    def update_player_coord(self, keys):
-        left, top = self.players[0].move_on_wasd(keys, self.dictionary_of_levels_walls[1])
-        self.change_padding(left, top)
-
-    def get_field(self, file_name, directory):
+    def update_player_coord(self, keys=None, mouse=None):
 
         """
-        Будем использовать для хранения объектов, в том числе и стен
+        вынес передвижение игрока в канвас для удобства
+        :param keys: список нажатых клавишь
+        :param mouse: клик мышки
+        :return:
         """
 
-        fullname = os.path.join(directory, file_name)
-        with open(fullname, 'r', encoding='utf8') as level:
-            field = [line.split() for line in level.readlines()]
-        return [[Cell((row, col),
-                      self.cell_size,
-                      field[row][col],
-                      self.dictionary_of_cell_group[field[row][col]])
-                 for col in range(len(field[row]))] for row in range(len(field))]
+        if keys is not None:
+            left, top = self.players[0].move_on_wasd(keys, self.dictionary_of_levels_walls[1])
+            self.change_padding(left, top)
+        if mouse is not None:
+            pass
 
     def set_screen(self, action):
         """
@@ -104,6 +102,7 @@ class Canvas:
         Пробегается по видимым слоям текущего уровня и отрисовывает их на экране
         """
 
+        screen = self.screen.copy()
         for layer in self.level_maps[self.current_level - 1].visible_layers:
             if layer.__class__.__name__ == 'TiledTileLayer':
                 for x, y, gid in layer:
@@ -115,13 +114,13 @@ class Canvas:
                     tile = self.level_maps[self.current_level - 1].get_tile_image_by_gid(gid)
                     if tile is not None:
                         tile = pygame.transform.scale(tile, (self.tile_width, self.tile_width))
-                        self.screen.blit(tile, (x * self.tile_width + self.left_padding,
+                        screen.blit(tile, (x * self.tile_width + self.left_padding,
                                                 y * self.tile_width + self.top_padding))
 
-        self.player_sprites.draw(self.screen)
-        self.pet_sprites.draw(self.screen)
-        self.enemy_sprites.draw(self.screen)
-        self.walls.draw(self.screen)
+        self.player_sprites.draw(screen)
+        self.pet_sprites.draw(screen)
+        self.enemy_sprites.draw(screen)
+        self.screen.blit(screen, (0, 0))
 
     def change_padding(self, left=0, top=0):
 
@@ -131,15 +130,23 @@ class Canvas:
 
         self.left_padding += left
         self.top_padding += top
-        for sprite in self.walls:
-            sprite.rect.x += left
-            sprite.rect.y += top
+
+        # пробегаемся по объектам Wall, и изменяем его положение в зависимости от переданных параметров
+        for walls_group in self.dictionary_of_levels_walls[1]:
+            for wall in walls_group:
+                wall.rect.x += left
+                wall.rect.y += top
 
 
-class Wall(pygame.sprite.Sprite):
-    def __init__(self, obj, tile_size, base_tile_width, group):
+class Wall:
+    def __init__(self, obj, tile_size, base_tile_width):
 
-        super().__init__(group)
+        """
+        :param obj: это объект, реаизованый в карте, из него берутся свойства, начальные координаты и т.д.
+        :param tile_size: - размер клетки, он фиксирован и равен 100
+        :param base_tile_width: - базовый размер тайла, то есть самой картинки (32*32)
+        self.rect и self.image нужны для проверки столкновений со стеной
+        """
 
         self.x = int(obj.x * tile_size / base_tile_width)
         self.y = int(obj.y * tile_size / base_tile_width)

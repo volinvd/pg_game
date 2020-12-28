@@ -12,40 +12,40 @@
   </data>
  </layer>
  <objectgroup id="2" name="Слой объектов 1">
-  <object id="52" name="solid" x="112" y="255.5" width="4.75" height="144.25"/>
-  <object id="55" name="solid" x="117.5" y="383.5" width="186.5" height="16"/>
-  <object id="57" name="solid" x="299" y="352.5" width="4.5" height="30"/>
-  <object id="58" name="solid" x="303.5" y="255.5" width="5.5" height="48.5"/>
-  <object id="59" name="solid" x="117" y="255.333" width="186.333" height="16.6667"/>
-  <object id="60" name="solid" x="309.5" y="288.25" width="106" height="15.5"/>
-  <object id="61" name="solid" x="304" y="351.5" width="111.5" height="16.5"/>
-  <object id="62" name="solid" x="410.75" y="228.5" width="4.75" height="59.5"/>
-  <object id="63" name="solid" x="415.75" y="351.25" width="5.25" height="48"/>
-  <object id="64" name="solid" x="415.667" y="400.333" width="127.667" height="14.6667"/>
-  <object id="65" name="solid" x="544.333" y="400" width="4.66667" height="47.3333"/>
-  <object id="67" name="solid" x="544" y="448.667" width="159.667" height="15.3333"/>
-  <object id="68" name="solid" x="698.667" y="336.121" width="5.33333" height="112.212"/>
-  <object id="71" name="solid" x="463.5" y="336.5" width="234.5" height="14"/>
-  <object id="72" name="solid" x="598" y="339.273" width="19.8182" height="26.5455"/>
-  <object id="74" name="solid" x="646.182" y="339.273" width="19.4545" height="26.1818"/>
-  <object id="75" name="solid" x="463.667" y="271.758" width="4.66667" height="63.5758"/>
-  <object id="77" name="solid" x="469" y="271.667" width="106.333" height="15.3333"/>
-  <object id="78" name="solid" x="576" y="272" width="5" height="32"/>
-  <object id="79" name="solid" x="575.667" y="304" width="160" height="15.6667"/>
-  <object id="80" name="solid" x="730.667" y="175.667" width="4.66667" height="127.667"/>
-  <object id="81" name="solid" x="580.333" y="175.333" width="150" height="16"/>
-  <object id="82" name="solid" x="575.333" y="175" width="4.66667" height="48.3333"/>
-  <object id="83" name="solid" x="464" y="207.667" width="111" height="15.6667"/>
-  <object id="84" name="solid" x="367.333" y="223.667" width="43" height="16"/>
-  <object id="85" name="solid" x="368" y="143.667" width="4.33333" height="79"/>
-  <object id="86" name="solid" x="373" y="143.333" width="42.3333" height="16.3333"/>
-  <object id="87" name="solid" x="464.333" y="47.6667" width="4" height="159.333"/>
-  <object id="88" name="solid" x="410.333" y="111.667" width="5.66667" height="31.6667"/>
-  <object id="89" name="solid" x="314.667" y="112" width="95.3333" height="15.6667"/>
-  <object id="92" name="solid" x="64.3333" y="128.333" width="255" height="15"/>
-  <object id="93" name="solid" x="63.5" y="32" width="5.5" height="96.5"/>
-  <object id="94" name="solid" x="69.3333" y="32" width="255.333" height="16"/>
-  <object id="95" name="solid" x="320.333" y="48.3333" width="143.667" height="15.3333"/>
+  <object id="52" name="wall" x="112" y="255.875" width="5" height="144.188"/>
+  <object id="55" name="wall" x="116.813" y="384" width="187.188" height="16"/>
+  <object id="57" name="wall" x="299" y="352.063" width="5" height="31.8125"/>
+  <object id="58" name="wall" x="303.938" y="256.063" width="5.0625" height="47.9375"/>
+  <object id="59" name="wall" x="117" y="255.958" width="187.021" height="16.0417"/>
+  <object id="60" name="wall" x="309" y="287.938" width="106.875" height="16"/>
+  <object id="61" name="wall" x="304" y="352" width="111.875" height="16"/>
+  <object id="62" name="wall" x="410.875" y="224.063" width="5.0625" height="64.0625"/>
+  <object id="63" name="wall" x="416.125" y="352" width="4.875" height="47.9375"/>
+  <object id="64" name="wall" x="416.042" y="400.021" width="127.854" height="15.9792"/>
+  <object id="65" name="wall" x="543.958" y="400" width="5.04167" height="48.0208"/>
+  <object id="67" name="wall" x="544" y="448.042" width="159.979" height="15.9583"/>
+  <object id="68" name="wall" x="698.979" y="336.121" width="5.02083" height="111.775"/>
+  <object id="71" name="wall" x="463.938" y="336.063" width="235.063" height="15.8125"/>
+  <object id="72" name="cupboard" x="598" y="339.273" width="19.8182" height="26.5455"/>
+  <object id="74" name="cupboard" x="646.182" y="339.273" width="19.4545" height="26.1818"/>
+  <object id="75" name="wall" x="463.979" y="272.07" width="4.97917" height="63.8883"/>
+  <object id="77" name="wall" x="469" y="272.042" width="107.021" height="15.8958"/>
+  <object id="78" name="wall" x="576" y="272" width="5" height="32"/>
+  <object id="79" name="wall" x="576.042" y="304" width="159.938" height="16.0417"/>
+  <object id="80" name="wall" x="730.854" y="175.917" width="5.22917" height="128.167"/>
+  <object id="81" name="wall" x="580.986" y="175.986" width="149.785" height="15.9565"/>
+  <object id="82" name="wall" x="576.029" y="176" width="4.88406" height="47.9855"/>
+  <object id="83" name="wall" x="464" y="208.058" width="112.087" height="15.8841"/>
+  <object id="84" name="wall" x="368.083" y="224.042" width="42.6875" height="16"/>
+  <object id="85" name="wall" x="368" y="143.979" width="5.08333" height="80"/>
+  <object id="86" name="wall" x="373" y="144.146" width="42.9583" height="15.7708"/>
+  <object id="87" name="wall" x="464.021" y="48.1212" width="5" height="159.848"/>
+  <object id="88" name="wall" x="410.958" y="112.042" width="5.04167" height="31.9167"/>
+  <object id="89" name="wall" x="314.917" y="112" width="96.0833" height="16.1667"/>
+  <object id="92" name="wall" x="64.0208" y="128.061" width="255.875" height="16"/>
+  <object id="93" name="wall" x="64.1364" y="32" width="4.86364" height="95.9545"/>
+  <object id="94" name="wall" x="69.0833" y="32" width="256.038" height="16"/>
+  <object id="95" name="wall" x="319.97" y="47.9697" width="144.03" height="16.1515"/>
  </objectgroup>
  <layer id="3" name="Слой тайлов 2" width="50" height="30">
   <data encoding="base64" compression="zlib">
