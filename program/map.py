@@ -66,6 +66,7 @@ class Canvas:
 
         self.enemies = []
         self.pets = []
+        self.change_padding(-100, -100)
 
     def update_player_coord(self, keys=None, mouse=None):
 

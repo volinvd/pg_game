@@ -86,39 +86,27 @@ class Player(Entity):
         # передвижение по оси y
         y = x = 0
         if keys[pygame.K_w]:
-            flag = True
-            for wall_group in level_walls:
-                for wall in wall_group:
-                    if pygame.sprite.collide_rect(self.collision_images[0], wall):
-                        flag = False
+            flag = not any([any([pygame.sprite.collide_rect(self.collision_images[0], wall) for wall in wall_group])
+                            for wall_group in level_walls])
             if flag:
                 y = self.speed_by_y
 
         elif keys[pygame.K_s]:
-            flag = True
-            for wall_group in level_walls:
-                for wall in wall_group:
-                    if pygame.sprite.collide_rect(self.collision_images[2], wall):
-                        flag = False
+            flag = not any([any([pygame.sprite.collide_rect(self.collision_images[2], wall) for wall in wall_group])
+                            for wall_group in level_walls])
             if flag:
                 y = -self.speed_by_y
 
         # передвижение по оси x
         if keys[pygame.K_a]:
-            flag = True
-            for wall_group in level_walls:
-                for wall in wall_group:
-                    if pygame.sprite.collide_rect(self.collision_images[3], wall):
-                        flag = False
+            flag = not any([any([pygame.sprite.collide_rect(self.collision_images[3], wall) for wall in wall_group])
+                            for wall_group in level_walls])
             if flag:
                 x = self.speed_by_x
 
         elif keys[pygame.K_d]:
-            flag = True
-            for wall_group in level_walls:
-                for wall in wall_group:
-                    if pygame.sprite.collide_rect(self.collision_images[1], wall):
-                        flag = False
+            flag = not any([any([pygame.sprite.collide_rect(self.collision_images[1], wall) for wall in wall_group])
+                            for wall_group in level_walls])
             if flag:
                 x = -self.speed_by_x
         return x, y

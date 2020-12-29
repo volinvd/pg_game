@@ -1,14 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.4" tiledversion="1.4.3" orientation="orthogonal" renderorder="right-down" width="56" height="34" tilewidth="16" tileheight="16" infinite="0" nextlayerid="11" nextobjectid="115">
+<map version="1.4" tiledversion="1.4.3" orientation="orthogonal" renderorder="right-down" width="56" height="34" tilewidth="16" tileheight="16" infinite="0" nextlayerid="17" nextobjectid="121">
  <tileset firstgid="1" name="goblinhouse" tilewidth="16" tileheight="16" tilecount="135" columns="9">
   <image source="../sprites/spritesheets/goblinhouse.png" width="150" height="250"/>
  </tileset>
  <tileset firstgid="136" name="Titleset_Doungeon" tilewidth="16" tileheight="16" tilecount="90" columns="10">
   <image source="../sprites/spritesheets/Titleset_Doungeon.png" width="160" height="144"/>
  </tileset>
- <layer id="1" name="Слой тайлов 1" width="56" height="34">
+ <layer id="11" name="фон" width="56" height="34">
   <data encoding="base64" compression="zlib">
-   eJztmEsSgCAIQNm0LY9QXdyrVjsXmaDEx2Hxds7IAxU1A0AOgsAc6802gHb8LZZBrOdg1A9D+IWflt/xQjLkt1dixILJm6YfJ2WvmdHP4v7T9sPcL5IBt14/D2dwK9av2njyK9fTTD10ZN1J+lHfEp78gHnOctyTt9r9QLJ+VL9aXc/OPFjz44hN8h2t4ScF/OjX+/fBfW+hxl07Myh9W7L2nHNb9OP8O7PoJ5kr735ce0E7zvB7Z5b/8SBocQGRgjvr
+   eJzt1UEOgCAMRNFuvP8RuCo3MBKw06F/8ZdqXwNxRMQgIkru2Uw9/9++6jvA19v35b1KX8be1LPgWzfhe3+m4o7w3elz/4dmWNUeB9/Jb1a8f/i87w6+Xr6MXeHzOAtuvlN+9Zz4evqIujQBVF+L1A==
+  </data>
+ </layer>
+ <layer id="12" name="стены" width="56" height="34">
+  <data encoding="base64" compression="zlib">
+   eJztmEsOgzAMRHOCllUrltz/kiULpKqKIRN/Omn9pNkiv0Bih1KSJGHktueuyDO+ZIha30MR9jXQ+vUk/fxIPznrnq2RpfD4tepD0qJ6s/hZ8t5rftFP+tb/2a9nvlj8SoYY8es531a/kiGkWq9mm1n8pP6gDYvfwWd/YPFD7xLSvmL1Q2eZXr+6btJ8ELn/UL+zd8t4fnrN2md+mjlwBr9IvPxG/31Yzy2In3Q3Qs6NqH036mf1rCg/i7vfAaOfJVdrM9PcOUL6ze0X2deT5Ju8AA4cNuA=
+  </data>
+ </layer>
+ <layer id="16" name="изображения объектов" width="56" height="34">
+  <data encoding="base64" compression="zlib">
+   eJztmDkLwjAUxz02dfKYPD6Ajoq7x+QBQlcHFRxUcBDBC7+7/0K61DaR2uQl5f3gR3P0tY82CWlzOYZhXGD4R1uWcfUZ5GEBFqkTSUhT0V+CZVgxkIstdGGPOgmN9OGAOglGCy6smUw8qwQxsndu03i4Goqh4i3pC7+HoC6LCagmS8c6arAOG6I+JcxFBy3Yhh1RX2q4x1ocg/GzgZ4oe19np8NE03Wj2IfqBwP3XCj605p//l77HGq7KGLi1g1bucE7fMAnfIn2LdxRJWWAIzxRJ2Exsu/7ERxHlNNG9a2rixmcR5QpMbGnyMq+xcf1/zwqsvaf55e5nqXxyTCMm3wA2zwSFQ==
   </data>
  </layer>
  <objectgroup id="2" name="walls">
@@ -45,16 +55,6 @@
   <object id="94" name="wall" x="117.083" y="64" width="256.038" height="16"/>
   <object id="95" name="wall" x="367.97" y="79.9697" width="144.03" height="16.1515"/>
  </objectgroup>
- <layer id="3" name="Слой тайлов 2" width="56" height="34">
-  <data encoding="base64" compression="zlib">
-   eJztmL8OgkAMxlE3dVNjTNTHcNdRFx/AwcXBxcHFP7y8JdGl6V05bI/j0l/yBVKg7cdxF6AoDMPoApvA2FyxFwmk+kv1HnC1e6A+aKBYQxOu9hA0Ao0Va2gSo3ZX/S0i1EgR7Dsnf9Q6mos/l4+c/B0dcR/UmNc5Fpsm41dnbOuuY9r4esXjEPJuk4q/f5mApqAZiqfmr2k/S9AKtBbKR3H6bn/Pz9lzruvZkr7fUvmqfi8odmXOpwjpJ+b8q2rdUOzOXONaN3BeX00OSX8P0BP0Ar1BpVDeFNDqI3d/Fb7v+y1oR+xLE+KPmxMhufagA7EvvQ635a9pjTYJ9Uf950nZHwf2T/3nyckfhfkzDKNtPrDAEQ0=
-  </data>
- </layer>
- <layer id="5" name="Слой тайлов 3" width="56" height="34">
-  <data encoding="base64" compression="zlib">
-   eJztmDtuwzAMhrnkAl1zg3Rsb5CM7dQTtGO7ds0dtGapZ92yNhAChKIHX5YCxB9AKI4sk7+ppwE2NvoSRgew4cblWgbg5XVk7qOhLTduib7DbM+KWEpw9S050+aBtts37n2Z7VXpJ4dEX+26xqj+GcHWP7kaR4+/uHIM96CvxQVkfZLCnWe96elTotEjrtHvM2YsgF+uQ1L2AH3RMYF6cnpL7wD5VcSgaSMBtZTqavmLSf1Z4b/WZnctnxTPpWjXpKWdZZ5rcXJ4xgQ2fWhraHxPrqU+aHw1PpIy9Yn6tHPHUdmuRDqveOybLPl7a9Tj+OP6QX3YN1Fba6/tgXV9kLxHSd4+Z/uSh3ODdT1dS9/3bD/ycIZB1/CFv4GxcNGcAWn+eow/Cz3PuNY9hcSHZm5+hO+LHI2T03O8aOUS5+eJWAlaF6C839bo44x1zRig57BUK4X+14q/1zmZu3cp+Zkgn1fJd+OcAdz/eA/J71J/9TzzbzwG/y1Gbko=
-  </data>
- </layer>
  <objectgroup id="10" name="objects">
   <object id="96" name="table" x="182" y="298" width="10.0909" height="38.0356"/>
   <object id="97" name="table" x="182" y="336" width="68" height="9.875"/>
@@ -66,7 +66,7 @@
   <object id="104" name="cupboard" x="646" y="370.909" width="20" height="27.1818"/>
   <object id="105" name="cupboard" x="693.909" y="371.091" width="20.0909" height="26.7273"/>
   <object id="106" name="cupboard" x="419.909" y="223.909" width="9.18182" height="31.1818"/>
-  <object id="110" name="stool" x="250" y="104.938" width="18.875" height="16.3125"/>
+  <object id="110" name="stool" x="330.121" y="136.847" width="18.875" height="16.3125"/>
   <object id="111" name="stairs" x="431.909" y="207.909" width="16.1818" height="16.1818"/>
   <object id="112" name="decorative_ax" x="256.938" y="290.938" width="13.0625" height="9.125"/>
   <object id="113" name="decorative_ax" x="288.719" y="291" width="13.0625" height="9.125"/>
