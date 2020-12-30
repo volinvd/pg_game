@@ -1,10 +1,9 @@
 import pygame
 import os
 import pytmx
+import random
 
 import program.Entities as Entities
-import program.Weapons as Weapons
-import program.Enchantment as Enchantment
 
 
 class Canvas:
@@ -80,8 +79,43 @@ class Canvas:
         if keys is not None:
             left, top = self.players[0].move_on_wasd(keys, self.dictionary_of_levels_objects[1])
             self.change_padding(left, top)
+
+            if keys[pygame.K_d]:
+                self.players[0].move_direction = "right"
+            elif keys[pygame.K_a]:
+                self.players[0].move_direction = "left"
+
+            self.animate_sprite(keys)
+
         if mouse is not None:
             pass
+
+    def animate_sprite(self, keys):
+        if not keys[pygame.K_w] and not keys[pygame.K_a] and not keys[pygame.K_s] and not keys[pygame.K_d]:
+            if self.players[0].move_direction == "right":
+                if random.randint(0, 100) > 70:
+                    self.players[0].update("look around right")
+            elif self.players[0].move_direction == "left":
+                if random.randint(0, 100) > 70:
+                    self.players[0].update("look around left")
+
+        elif self.players[0].move_direction == "right":
+            if keys[pygame.K_d]:
+                self.players[0].update("move right")
+            elif keys[pygame.K_w]:
+                self.players[0].update("move right")
+            elif keys[pygame.K_s]:
+                self.players[0].update("move right")
+
+        elif self.players[0].move_direction == "left":
+            if keys[pygame.K_a]:
+                self.players[0].update("move left")
+            elif keys[pygame.K_d]:
+                self.players[0].update("move left")
+            elif keys[pygame.K_w]:
+                self.players[0].update("move left")
+            elif keys[pygame.K_s]:
+                self.players[0].update("move left")
 
     def set_screen(self, action):
         """

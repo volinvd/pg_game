@@ -1,5 +1,6 @@
 import pygame
 import os
+import pprint
 
 
 class CollisionImage(pygame.sprite.Sprite):
@@ -13,17 +14,18 @@ class CollisionImage(pygame.sprite.Sprite):
 
 class Entity(pygame.sprite.Sprite):
     def __init__(self, position, name, health, group):
-
         super().__init__(group)
 
         self.image = pygame.Surface((90, 90))
         pygame.draw.rect(self.image, pygame.Color("blue"), [position[0], position[1], 90, 90])
         self.rect = pygame.Rect(position[0], position[1], 90, 90)
+        self.position = position
+        self.move_direction = "right"
 
         self.rect = self.image.get_rect()
         self.rect.x, self.rect.y = position
 
-        self.speed_by_x, self.speed_by_y = 7, 7
+        self.speed_by_x, self.speed_by_y = 15, 15
 
         self.name = name
         self.health = health
@@ -43,6 +45,49 @@ class Entity(pygame.sprite.Sprite):
             image.set_colorkey(color_key)
         return image
 
+    def animate(self, sheet, columns, rows, x, y, sp_description):
+        self.frames = {}
+        self.cut_sheet(sheet, columns, rows, sp_description)
+        self.cur_frame = ("move right", 0)
+        self.image = self.frames["move right"][0]
+        self.rect = self.rect.move(x, y)
+
+    def cut_sheet(self, sheet, columns, rows, sp_description):
+        self.sp_description = sp_description
+        self.rect = pygame.Rect(0, 0, sheet.get_width() // columns,
+                                sheet.get_height() // rows)
+
+        for key, list_with_coordinates in self.sp_description.items():
+            frame_list = []
+
+            for coordinate in list_with_coordinates:
+                frame_location = (self.rect.w * coordinate[0], self.rect.h * coordinate[1])
+                print(frame_location)
+                frame = sheet.subsurface(pygame.Rect(frame_location, self.rect.size))
+                frame = pygame.transform.scale(frame, (self.size, self.size))
+                frame_list.append(frame)
+
+            self.frames[key] = frame_list
+
+        print(self.frames)
+        print(self.sp_description)
+
+    def update(self, direction):
+        if self.cur_frame[0] == direction:
+            print("in", self.cur_frame[1], direction)
+            if self.cur_frame[1] - 1 == len(self.frames[direction]) or \
+                    self.cur_frame[1] + 1 == len(self.frames[direction]):
+                self.cur_frame = (direction, 0)
+
+            else:
+                self.cur_frame = (direction, self.cur_frame[1] + 1)
+        else:
+            self.cur_frame = (direction, 0)
+
+        print("out", self.cur_frame[1], direction)
+
+        self.image = self.frames[direction][self.cur_frame[1]]
+
 
 class Player(Entity):
     def __init__(self, position, name, health, group):
@@ -57,6 +102,24 @@ class Player(Entity):
 
         self.rect = self.image.get_rect()
         self.rect.x, self.rect.y = position
+
+        sp_description = {"look around right": [(x, 0) for x in range(0, 13)],
+                          "move right": [(x, 1) for x in range(0, 8)],
+                          "beat right up": [(x, 2) for x in range(0, 10)],
+                          "beat right down": [(x, 3) for x in range(0, 10)],
+                          "sweeping edge beat right": [(x, 4) for x in range(0, 8)],
+                          "jump right": [(x, 5) for x in range(0, 10)],
+                          "fall from the portal right": [(x, 7) for x in range(0, 7)],
+                          "look around left": [(x, 8) for x in range(0, 13)],
+                          "move left": [(x, 9) for x in range(0, 8)],
+                          "beat left up": [(x, 11) for x in range(0, 10)],
+                          "beat left down": [(x, 12) for x in range(0, 10)],
+                          "sweeping edge beat left": [(x, 13) for x in range(0, 8)],
+                          "jump left": [(x, 14) for x in range(0, 6)],
+                          "fall from the portal left": [(x, 15) for x in range(0, 7)]}
+
+        spritesheet_img = self.load_image("Adventurer Sprite Sheet v1.1.png", "data\sprites\spritesheets")
+        self.animate(spritesheet_img, 13, 16, self.rect.x, self.rect.y, sp_description)
 
         # получинеие данных из изображения персонажа
         x, y, w, h = self.rect.x, self.rect.y, self.rect.w, self.rect.h
