@@ -36,12 +36,12 @@ class Canvas:
         self.player_sprites = pygame.sprite.Group()
         self.pet_sprites = pygame.sprite.Group()
         self.enemy_sprites = pygame.sprite.Group()
+        self.inventory_group = pygame.sprite.Group()
 
         self.left_padding, self.top_padding = 0, 0
 
         self.players = [Entities.Player((self.window_size[0] // 2, self.window_size[1] // 2),
-                                        'Player', 100, self.player_sprites)]
-
+                                        'Player', 100, self.player_sprites, self.window_size, self.inventory_group)]
         self.dictionary_of_types = \
             {
                 'wall': Wall,
@@ -77,6 +77,7 @@ class Canvas:
         """
 
         if keys is not None:
+
             left, top = self.players[0].move_on_wasd(keys, self.dictionary_of_levels_objects[1])
             self.change_padding(left, top)
 
@@ -168,6 +169,10 @@ class Canvas:
         self.player_sprites.draw(screen)
         self.pet_sprites.draw(screen)
         self.enemy_sprites.draw(screen)
+
+        if self.players[0].inventory_state == 'open':
+            self.inventory_group.draw(screen)
+
         self.screen.blit(screen, (0, 0))
 
     def change_padding(self, left=0, top=0):
@@ -184,6 +189,68 @@ class Canvas:
             for wall in walls_group:
                 wall.rect.x += left
                 wall.rect.y += top
+
+    def set_inventory_cell_position(self, event):
+
+        """
+        :param event: какое-либо событие
+        :return: просто прирывает выполнение функции
+        """
+
+        # начало смены координат клетки
+        if event.type == pygame.MOUSEBUTTONDOWN and not self.players[0].change_inventory_cell_position:
+
+            mouse_coord = event.pos
+            self.players[0].first_inventory_cell = [
+                [cell for cell in cell_group
+                 if (cell.rect.x <= mouse_coord[0] <= cell.rect.x + cell.size and
+                     cell.rect.y <= mouse_coord[1] <= cell.rect.y + cell.size)]
+                for cell_group in self.players[0].inventory.inventory_cells]
+
+            self.players[0].first_inventory_cell = [item for item in self.players[0].first_inventory_cell if item]
+
+            if not self.players[0].first_inventory_cell:
+                self.players[0].change_inventory_cell_position = False
+                self.players[0].first_inventory_cell = self.players[0].second_inventory_cell = None
+                self.players[0].difference_x = self.players[0].difference_y = 0
+                return
+
+            self.players[0].first_inventory_cell = self.players[0].first_inventory_cell[0][0]
+            self.players[0].difference_x = mouse_coord[0] - self.players[0].first_inventory_cell.rect.x
+            self.players[0].difference_y = mouse_coord[1] - self.players[0].first_inventory_cell.rect.y
+            self.players[0].change_inventory_cell_position = True
+
+        # передвижение клетки
+        if event.type == pygame.MOUSEMOTION and self.players[0].change_inventory_cell_position:
+            self.players[0].first_inventory_cell.rect.x = event.pos[0] - self.players[0].difference_x
+            self.players[0].first_inventory_cell.rect.y = event.pos[1] - self.players[0].difference_y
+
+        # конец смены координат клетки
+        if event.type == pygame.MOUSEBUTTONUP and self.players[0].change_inventory_cell_position:
+            self.players[0].change_inventory_cell_position = False
+
+            self.players[0].second_inventory_cell = \
+                [[cell for cell in cell_group if pygame.sprite.collide_rect(cell, self.players[0].first_inventory_cell)]
+                 for cell_group in self.players[0].inventory.inventory_cells]
+
+            self.players[0].second_inventory_cell = [[cell for cell in item if cell != self.players[0].first_inventory_cell]
+                                          for item in self.players[0].second_inventory_cell]
+            self.players[0].second_inventory_cell = [item for item in self.players[0].second_inventory_cell if item]
+
+            if not self.players[0].second_inventory_cell:
+                self.players[0].first_inventory_cell.rect.x, self.players[0].first_inventory_cell.rect.y = \
+                    self.players[0].first_inventory_cell.base_position
+                return
+
+            self.players[0].second_inventory_cell = self.players[0].second_inventory_cell[0][0]
+            self.players[0].second_inventory_cell.rect.x, self.players[0].second_inventory_cell.rect.y = \
+                self.players[0].first_inventory_cell.base_position
+            self.players[0].first_inventory_cell.rect.x, self.players[0].first_inventory_cell.rect.y = \
+                self.players[0].second_inventory_cell.base_position
+
+            self.players[0].first_inventory_cell.base_position = self.players[0].first_inventory_cell.rect.x, self.players[0].first_inventory_cell.rect.y
+            self.players[0].second_inventory_cell.base_position = \
+                self.players[0].second_inventory_cell.rect.x, self.players[0].second_inventory_cell.rect.y
 
 
 class Obstacle:
@@ -237,5 +304,3 @@ class Bed(Obstacle):
 
 class DecorativeAx(Obstacle):
     pass
-
-
