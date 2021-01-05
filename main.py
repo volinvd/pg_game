@@ -1,41 +1,50 @@
 import pygame
+import os
 
-
-class Canvas:
-    def __init__(self):
-        info = pygame.display.Info()
-        self.window_size = info.current_w, info.current_h - 60
-        self.curr_screen = 0
-
-    def set_screen(self):
-        self.curr_screen = not self.curr_screen
-        if self.curr_screen:
-            pygame.quit()
-            pygame.init()
-            return pygame.display.set_mode(self.window_size)
-        else:
-            return pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
-
-    def render(self, screen):
-        pass
+from program import map
 
 
 def main():
     pygame.init()
 
-    canvas = Canvas()
-    screen = canvas.set_screen()
-
+    canvas = map.Canvas()
     running = True
+
+    square_coordinate = None
+    difference_x = 0
+    difference_y = 0
+    change_coord = False
+
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
 
             if event.type == pygame.KEYUP and event.key == pygame.K_F11:
-                screen = canvas.set_screen()
+                canvas.screen = canvas.set_screen("change_size_type")
 
-        screen.fill((0, 0, 0))
+            if event.type == pygame.KEYUP and event.key == pygame.K_ESCAPE:
+                canvas.screen = canvas.set_screen("window_size")
+
+            if event.type == pygame.KEYUP and (event.key == pygame.K_e or event.key == pygame.K_i):
+                if canvas.players[0].inventory_state == 'open':
+                    canvas.players[0].inventory_state = 'close'
+                else:
+                    canvas.players[0].inventory_state = 'open'
+
+            if canvas.players[0].inventory_state == 'open':
+                canvas.set_inventory_cell_position(event)
+        keys = pygame.key.get_pressed()
+        if keys and canvas.players[0].inventory_state == 'close':
+            """
+            Если есть нажатые клавиши, вызывается передвижения метод игрока
+            Он возвращает перемещения по оси x и y
+            Потом мы сдвигаем канвас на эти значения
+            """
+            canvas.update_player_coord(keys=keys)
+
+        canvas.screen.fill((200, 200, 200))
+        canvas.render()
         pygame.display.flip()
     pygame.quit()
 
