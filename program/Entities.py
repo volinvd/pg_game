@@ -180,7 +180,7 @@ class Player(Entity):
                           "jump left": [(x, 14) for x in range(0, 6)],
                           "fall from the portal left": [(x, 15) for x in range(0, 7)]}
 
-        spritesheet_img = self.load_image("Adventurer Sprite Sheet v1.1.png", "data\sprites\spritesheets")
+        spritesheet_img = self.load_image("player.png", "data/sprites/spritesheets/entities/")
         self.animate(spritesheet_img, 13, 16, self.rect.x, self.rect.y, sp_description)
 
         # получинеие данных из изображения персонажа

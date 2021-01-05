@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.4" tiledversion="1.4.3" orientation="orthogonal" renderorder="right-down" width="56" height="34" tilewidth="16" tileheight="16" infinite="0" nextlayerid="17" nextobjectid="121">
  <tileset firstgid="1" name="goblinhouse" tilewidth="16" tileheight="16" tilecount="135" columns="9">
-  <image source="../sprites/spritesheets/goblinhouse.png" width="150" height="250"/>
+  <image source="../sprites/spritesheets/tiles/goblinhouse.png" width="150" height="250"/>
  </tileset>
  <tileset firstgid="136" name="Titleset_Doungeon" tilewidth="16" tileheight="16" tilecount="90" columns="10">
-  <image source="../sprites/spritesheets/Titleset_Doungeon.png" width="160" height="144"/>
+  <image source="../sprites/spritesheets/tiles/dungetileset.png" width="160" height="144"/>
  </tileset>
  <layer id="11" name="фон" width="56" height="34">
   <data encoding="base64" compression="zlib">
