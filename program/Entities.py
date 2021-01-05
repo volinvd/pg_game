@@ -130,7 +130,7 @@ class Player(Entity):
                                  CollisionImage((x + 10, y + h, w - 10, 10)),
                                  CollisionImage((x, y + 10, 10, h - 10))]
 
-    def move_on_wasd(self, keys, level_walls):
+    def move_with_keyboard(self, keys, level_walls):
 
         """
         flag = True
@@ -173,6 +173,10 @@ class Player(Entity):
             if flag:
                 x = -self.speed_by_x
         return x, y
+
+    def move_with_mouse_click(self):
+        mouse_click_coords = pygame.mouse.get_pos()
+
 
 
 class BaseEnemy(Entity):

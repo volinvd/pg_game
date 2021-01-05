@@ -77,7 +77,7 @@ class Canvas:
         """
 
         if keys is not None:
-            left, top = self.players[0].move_on_wasd(keys, self.dictionary_of_levels_objects[1])
+            left, top = self.players[0].move_with_keyboard(keys, self.dictionary_of_levels_objects[1])
             self.change_padding(left, top)
 
             if keys[pygame.K_d]:
@@ -87,8 +87,8 @@ class Canvas:
 
             self.animate_sprite(keys)
 
-        if mouse is not None:
-            pass
+        elif mouse is not None:
+            self.players[0].move_with_mouse_click()
 
     def animate_sprite(self, keys):
         if not keys[pygame.K_w] and not keys[pygame.K_a] and not keys[pygame.K_s] and not keys[pygame.K_d]:
