@@ -88,6 +88,106 @@ class Entity(pygame.sprite.Sprite):
 
         self.image = self.frames[direction][self.cur_frame[1]]
 
+    def a_star_pathfinding(self, level_walls, start_point, end_point, collision_images):
+        path = [start_point]
+
+        # List of nodes algorithm had checked
+        closed_node_list = []
+
+        window_width, window_height = pygame.display.get_surface().get_size()
+        counter = 0
+
+        # The algorithm stops when there are no blocks to check. This means there is no solution
+        # The amount of blocks is calculated by the formula - screen size divided by block size
+        while counter <= (window_width * window_height) // (self.size ** 2):
+            counter += 1
+            current_node = path[-1]
+
+            # This is the amount the algorithm adds the coordinates of current node to find all adjacent nodes
+            # Node size depends on the Entity.size variable
+            possible_node_positions = [(0, -self.size), (0, self.size), (-self.size, 0), (self.size, 0),
+                                       (-self.size, -self.size), (-self.size, self.size), (self.size, -self.size),
+                                       (self.size, self.size)]
+
+            # F value of the best node has to be high, in order to change to the best following node value
+            best_node_f = 1000000000000
+            best_node = current_node
+
+            # Going through the list of adjacent nodes to find the best one
+            for index, (x_coord, y_coord) in enumerate(possible_node_positions):
+                obstacle_in_node = False
+
+                # Checking if the adjacent node has an obstacle in it
+                if index == 0:
+                    obstacle_in_node = any([any([pygame.sprite.collide_rect(collision_images[0], wall) for wall in
+                                                 wall_group]) for wall_group in level_walls])
+                elif index == 1:
+                    obstacle_in_node = any([any([pygame.sprite.collide_rect(collision_images[2], wall) for wall in
+                                                 wall_group]) for wall_group in level_walls])
+                elif index == 2:
+                    obstacle_in_node = any([any([pygame.sprite.collide_rect(collision_images[3], wall) for wall in
+                                                 wall_group]) for wall_group in level_walls])
+                elif index == 3:
+                    obstacle_in_node = any([any([pygame.sprite.collide_rect(collision_images[1], wall) for wall in
+                                                 wall_group]) for wall_group in level_walls])
+                elif index == 4:
+                    obstacle_in_node = any([any([any([pygame.sprite.collide_rect(collision_images[0], wall)
+                                                     for wall in wall_group]) for wall_group in level_walls]),
+                                           any([any([pygame.sprite.collide_rect(collision_images[3], wall)
+                                                     for wall in wall_group]) for wall_group in level_walls])])
+                elif index == 5:
+                    obstacle_in_node = any([any([any([pygame.sprite.collide_rect(collision_images[2], wall)
+                                                      for wall in wall_group]) for wall_group in level_walls]),
+                                            any([any([pygame.sprite.collide_rect(collision_images[3], wall)
+                                                      for wall in wall_group]) for wall_group in level_walls])])
+                elif index == 6:
+                    obstacle_in_node = any([any([any([pygame.sprite.collide_rect(collision_images[0], wall)
+                                                      for wall in wall_group]) for wall_group in level_walls]),
+                                            any([any([pygame.sprite.collide_rect(collision_images[1], wall)
+                                                      for wall in wall_group]) for wall_group in level_walls])])
+                elif index == 7:
+                    obstacle_in_node = any([any([any([pygame.sprite.collide_rect(collision_images[1], wall)
+                                                      for wall in wall_group]) for wall_group in level_walls]),
+                                            any([any([pygame.sprite.collide_rect(collision_images[2], wall)
+                                                      for wall in wall_group]) for wall_group in level_walls])])
+
+                # If there is no obstacle in the node, the player could go into it
+                if not obstacle_in_node:
+                    adjacent_node = current_node[0] + x_coord, current_node[1] + y_coord
+
+                    # If the node was already checked, it can't be the best one
+                    if adjacent_node not in closed_node_list:
+                        # Value of distance in nodes between the start node and the current node
+                        node_g_value = (len(path) - 1) * self.size
+                        # Value of estimated distance between the current node and the end node
+                        node_h_value = (adjacent_node[0] - end_point[0]) ** 2 + (adjacent_node[1] - end_point[1]) ** 2
+                        # Value of total cost of the node (G + H)
+                        node_f_value = node_g_value + node_h_value
+
+                        if node_f_value < best_node_f:
+                            closed_node_list.append(best_node)
+
+                            # Changing the best node
+                            best_node = adjacent_node
+                            best_node_f = node_f_value
+                        else:
+                            closed_node_list.append(adjacent_node)
+
+            path.append(best_node)
+
+            if best_node not in closed_node_list:
+                # Checking if the best node contains the end_point
+                # If it does the algorithm found the path, if it doesn't algorithm continues searching
+                if (end_point[0] in range(best_node[0] - self.size, best_node[0] + self.size + 1)
+                        and end_point[1] in range(best_node[1] - self.size, best_node[1] + self.size + 1)):
+
+                    path.append(end_point)
+                    return path
+
+            closed_node_list.append(best_node)
+        # If the path couldn't be found, function returns None
+        return None
+
 
 class Player(Entity):
     def __init__(self, position, name, health, group):
@@ -174,9 +274,54 @@ class Player(Entity):
                 x = -self.speed_by_x
         return x, y
 
-    def move_with_mouse_click(self):
+    def move_with_mouse_click(self, level_walls):
+        # List for the path written down in a form of (+- self.speed_by_x, +- self.speed_by_y)
+        path_increments = []
+
+        # Getting the position of the mouse after mouse click
         mouse_click_coords = pygame.mouse.get_pos()
 
+        # This variable is a flag, that checks if the mouse was clicked not on the floor
+        # (on the decorative items, walls or air)
+        prohibited_sprites_not_clicked = not any([any([sprite for sprite in wall
+                                                       if sprite.rect.collidepoint(mouse_click_coords)])
+                                                  for wall in level_walls])
+
+        if prohibited_sprites_not_clicked:
+            path = Entity.a_star_pathfinding(self, level_walls, (self.rect.x + self.size // 2, self.rect.y +
+                                                                 self.size // 2), mouse_click_coords,
+                                             self.collision_images)
+            # If the algorithm found the path we divide given path by increments equal to self.speed_by_x/y
+            if path is not None:
+
+                # Going through the path list
+                for index, (current_node_x, current_node_y) in enumerate(path[:-1]):
+                    next_node_x, next_node_y = path[index + 1][0], path[index + 1][1]
+
+                    # Getting the amount of increments by finding distance between current
+                    # and next node and dividing it by self.speed_by_x
+                    amount_of_increments = round(round(((current_node_x - next_node_x) ** 2 +
+                                                        (current_node_y - next_node_y) ** 2) ** 0.5) // self.speed_by_x)
+                    # Dividing our path into increments
+                    for _ in range(amount_of_increments):
+                        if current_node_x + self.size == next_node_x and current_node_y + self.size == next_node_y:
+                            path_increments.append((-self.speed_by_x, -self.speed_by_y))
+                        elif current_node_x + self.size == next_node_x and current_node_y - self.size == next_node_y:
+                            path_increments.append((-self.speed_by_x, self.speed_by_y))
+                        elif current_node_x - self.size == next_node_x and current_node_y + self.size == next_node_y:
+                            path_increments.append((self.speed_by_x, -self.speed_by_y))
+                        elif current_node_x - self.size == next_node_x and current_node_y - self.size == next_node_y:
+                            path_increments.append((self.speed_by_x, self.speed_by_y))
+                        elif current_node_x + self.size == next_node_x:
+                            path_increments.append((-self.speed_by_x, 0))
+                        elif current_node_x - self.size == next_node_x:
+                            path_increments.append((self.speed_by_x, 0))
+                        elif current_node_y + self.size == next_node_y:
+                            path_increments.append((0, -self.speed_by_y))
+                        elif current_node_y - self.size == next_node_y:
+                            path_increments.append((0, self.speed_by_y))
+
+        return path_increments
 
 
 class BaseEnemy(Entity):

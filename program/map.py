@@ -2,6 +2,7 @@ import pygame
 import os
 import pytmx
 import random
+from time import sleep
 
 import program.Entities as Entities
 
@@ -52,6 +53,7 @@ class Canvas:
                 'stairs': Stairs,
                 'bed': Bed,
                 'decorative_ax': DecorativeAx,
+                'air': Air,
             }
 
         self.dictionary_of_levels_objects = \
@@ -88,7 +90,11 @@ class Canvas:
             self.animate_sprite(keys)
 
         elif mouse is not None:
-            self.players[0].move_with_mouse_click()
+            path_increments = self.players[0].move_with_mouse_click(self.dictionary_of_levels_objects[1])
+
+            # Going through the list and using the function change_padding to move the player
+            for left, top in path_increments:
+                self.change_padding(left, top)
 
     def animate_sprite(self, keys):
         if not keys[pygame.K_w] and not keys[pygame.K_a] and not keys[pygame.K_s] and not keys[pygame.K_d]:
@@ -149,7 +155,6 @@ class Canvas:
         """
         Пробегается по видимым слоям текущего уровня и отрисовывает их на экране
         """
-
         screen = self.screen.copy()
         for layer in self.level_maps[self.current_level - 1].visible_layers:
             if layer.__class__.__name__ == 'TiledTileLayer':
@@ -239,3 +244,5 @@ class DecorativeAx(Obstacle):
     pass
 
 
+class Air(Obstacle):
+    pass
