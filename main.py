@@ -10,11 +10,6 @@ def main():
     canvas = map.Canvas()
     running = True
 
-    square_coordinate = None
-    difference_x = 0
-    difference_y = 0
-    change_coord = False
-
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:

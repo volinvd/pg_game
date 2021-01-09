@@ -63,7 +63,12 @@ class Canvas:
                 2: []
             }
 
-        self.enemies = []
+        self.enemies = \
+            [
+                Entities.BaseEnemy((2935, 2570), 'enemy', 100, self.enemy_sprites, 'up'),
+                Entities.BaseEnemy((4000, 2570), 'enemy', 100, self.enemy_sprites, 'up'),
+                Entities.BaseEnemy((1935, 2570), 'enemy', 100, self.enemy_sprites, 'up')
+            ]
         self.pets = []
         self.change_padding(-100, -100)
 
@@ -166,13 +171,15 @@ class Canvas:
                         screen.blit(tile, (x * self.tile_width + self.left_padding,
                                            y * self.tile_width + self.top_padding))
 
-        self.player_sprites.draw(screen)
         self.pet_sprites.draw(screen)
         self.enemy_sprites.draw(screen)
 
         if self.players[0].inventory_state == 'open':
             self.inventory_group.draw(screen)
-
+        else:
+            for enemy in self.enemies:
+                enemy.move(self.dictionary_of_levels_objects[1])
+        self.player_sprites.draw(screen)
         self.screen.blit(screen, (0, 0))
 
     def change_padding(self, left=0, top=0):
@@ -189,6 +196,15 @@ class Canvas:
             for wall in walls_group:
                 wall.rect.x += left
                 wall.rect.y += top
+
+        for enemy in self.enemies:
+            enemy.rect.x += left
+            enemy.rect.y += top
+            for collision_img in enemy.collision_images:
+                collision_img.rect.x += left
+                collision_img.rect.y += top
+            enemy.hp_bar.rect.x += left
+            enemy.hp_bar.rect.y += top
 
     def set_inventory_cell_position(self, event):
 

@@ -5,12 +5,17 @@ import random
 
 
 class CollisionImage(pygame.sprite.Sprite):
-    def __init__(self, size):
-        super().__init__()
+    def __init__(self, size, group=None):
+        if group is not None:
+            super().__init__(group)
         self.image = pygame.Surface((size[2], size[3]))
         pygame.draw.rect(self.image, pygame.Color("white"), [size[0], size[1],
                                                              size[2], size[3]])
         self.rect = pygame.Rect(size[0], size[1], size[2], size[3])
+
+    def update_coord(self, x, y):
+        self.rect.x += x
+        self.rect.y += y
 
 
 class Inventory(pygame.sprite.Sprite):
@@ -75,9 +80,9 @@ class Entity(pygame.sprite.Sprite):
     def __init__(self, position, name, health, group):
         super().__init__(group)
 
-        self.image = pygame.Surface((90, 90))
-        pygame.draw.rect(self.image, pygame.Color("blue"), [position[0], position[1], 90, 90])
-        self.rect = pygame.Rect(position[0], position[1], 90, 90)
+        self.image = pygame.Surface((120, 120))
+        pygame.draw.rect(self.image, pygame.Color("blue"), [0, 0, 120, 120])
+        self.rect = pygame.Rect(position[0], position[1], 120, 120)
         self.position = position
         self.move_direction = "right"
 
@@ -89,6 +94,8 @@ class Entity(pygame.sprite.Sprite):
         self.name = name
         self.health = health
         self.size = 120
+
+        self.hp_bar = HPBar((position[0] + 20, position[1] + 120, 80, 15), group)
 
     def get_damage(self, damage):
         self.health -= damage
@@ -180,7 +187,7 @@ class Player(Entity):
                           "jump left": [(x, 14) for x in range(0, 6)],
                           "fall from the portal left": [(x, 15) for x in range(0, 7)]}
 
-        spritesheet_img = self.load_image("Adventurer Sprite Sheet v1.1.png", "data\sprites\spritesheets")
+        spritesheet_img = self.load_image("Adventurer Sprite Sheet v1.1.png", "data/sprites/spritesheets")
         self.animate(spritesheet_img, 13, 16, self.rect.x, self.rect.y, sp_description)
 
         # получинеие данных из изображения персонажа
@@ -239,4 +246,75 @@ class Player(Entity):
 
 
 class BaseEnemy(Entity):
-    pass
+    def __init__(self, position, name, health, group, direction):
+        super().__init__(position, name, health, group)
+
+        # получинеие данных из изображения моба
+        x, y, w, h = self.rect.x, self.rect.y, self.size, self.size
+
+        # список стен вокруг персонажа
+        self.collision_images = [CollisionImage((x + 10, y, w - 20, 10)),
+                                 CollisionImage((x + w - 10, y + 20, 10, h - 40)),
+                                 CollisionImage((x + 20, y + h - 10, w - 40, 10)),
+                                 CollisionImage((x, y + 20, 10, h - 40))]
+        self.direction = direction
+        self.speed_by_y = self.speed_by_x = 5
+
+    def move(self, level_walls):
+        if self.direction == 'up':
+            flag = not any([any([pygame.sprite.collide_rect(self.collision_images[0], wall) for wall in wall_group])
+                            for wall_group in level_walls])
+            if flag:
+                self.rect.y -= self.speed_by_y
+                for collision_img in self.collision_images:
+                    collision_img.rect.y -= self.speed_by_y
+                self.hp_bar.rect.y -= self.speed_by_y
+            else:
+                self.direction = 'right'
+        if self.direction == 'right':
+            flag = not any([any([pygame.sprite.collide_rect(self.collision_images[1], wall) for wall in wall_group])
+                            for wall_group in level_walls])
+            if flag:
+                self.rect.x += self.speed_by_x
+                for collision_img in self.collision_images:
+                    collision_img.rect.x += self.speed_by_x
+                self.hp_bar.rect.x += self.speed_by_x
+            else:
+                self.direction = 'down'
+        if self.direction == 'down':
+            flag = not any([any([pygame.sprite.collide_rect(self.collision_images[2], wall) for wall in wall_group])
+                            for wall_group in level_walls])
+            if flag:
+                self.rect.y += self.speed_by_y
+                for collision_img in self.collision_images:
+                    collision_img.rect.y += self.speed_by_y
+                self.hp_bar.rect.y += self.speed_by_y
+            else:
+                self.direction = 'left'
+        if self.direction == 'left':
+            flag = not any([any([pygame.sprite.collide_rect(self.collision_images[3], wall) for wall in wall_group])
+                            for wall_group in level_walls])
+            if flag:
+                self.rect.x -= self.speed_by_x
+                for collision_img in self.collision_images:
+                    collision_img.rect.x -= self.speed_by_x
+                self.hp_bar.rect.x -= self.speed_by_x
+            else:
+                self.direction = 'up'
+
+
+class HPBar(pygame.sprite.Sprite):
+    def __init__(self, size, group):
+        super().__init__(group)
+        self.image = pygame.Surface((size[2], size[3]))
+        pygame.draw.rect(self.image, pygame.Color("green"), [0, 0,
+                                                             size[2], size[3]])
+        pygame.draw.rect(self.image, pygame.Color("black"), [0, 0,
+                                                             size[2], size[3]], 1)
+        self.rect = pygame.Rect(size[0], size[1], size[2], size[3])
+        self.max_hp = size[2]
+
+    def update_coord(self, x, y):
+        self.rect.x += x
+        self.rect.y += y
+
