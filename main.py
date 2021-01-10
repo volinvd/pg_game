@@ -53,6 +53,7 @@ class MenuWidget(QMainWindow):
     def __init__(self):
         super().__init__()
         uic.loadUi('data/menu_ui/menu.ui', self)
+        self.setWindowTitle("Dungeon Pig Launcher")
 
         self.settings_window = None
 
