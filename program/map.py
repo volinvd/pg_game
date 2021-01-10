@@ -7,13 +7,13 @@ import program.Entities as Entities
 
 
 class Canvas:
-    def __init__(self):
+    def __init__(self, level):
 
         """
         info - переменная, хранящая информацию о экране пользователя
         self.screen - главный экран для отрисоки
         self.filename_of_maps - список, в котором хранятся пути к файлам карт
-        self.level_maps - список, в котором хранятся все уровни
+        self.level_map - список, в котором хранятся все уровни
         self.sizes - размеры уровня в клетках по x и y
         self.current_level - переменная, хранящая порядковый номер текущего уровня
         self.dictionary_of_levels_objects - словарь, ключем которого является порядковый номер уровня
@@ -26,10 +26,10 @@ class Canvas:
         self.opened_in_full_screen = True
 
         self.screen = self.set_screen("change_size_type")
-        self.filename_of_maps = ['data/maps/gob.tmx']
-        self.level_maps = [pytmx.load_pygame(file_name) for file_name in self.filename_of_maps]
-        self.sizes = [[level_map.height, level_map.width] for level_map in self.level_maps]
-        self.current_level = 1
+        self.filename_of_maps = ['data/maps/gob.tmx', 'data/maps/gob.tmx', 'data/maps/gob.tmx'][level - 1]
+        self.level_map = pytmx.load_pygame(self.filename_of_maps)
+        self.sizes = [self.level_map.height, self.level_map.width]
+        self.current_level = level
 
         self.tile_width = 100
 
@@ -54,14 +54,11 @@ class Canvas:
                 'decorative_ax': DecorativeAx,
             }
 
-        self.dictionary_of_levels_objects = \
-            {
-                1: [[self.dictionary_of_types[obj.name](obj, self.tile_width, self.level_maps[0].tilewidth)
-                     for obj in object_groups if self.dictionary_of_types[obj.name]]
-                    for object_groups in self.level_maps[0].objectgroups],
-
-                2: []
-            }
+        self.dictionary_of_levels_objects = {}
+        self.dictionary_of_levels_objects[level] = \
+            [[self.dictionary_of_types[obj.name](obj, self.tile_width, self.level_map.tilewidth)
+              for obj in object_groups if self.dictionary_of_types[obj.name]]
+             for object_groups in self.level_map.objectgroups]
 
         self.enemies = \
             [
@@ -83,7 +80,7 @@ class Canvas:
 
         if keys is not None:
 
-            left, top = self.players[0].move_on_wasd(keys, self.dictionary_of_levels_objects[1])
+            left, top = self.players[0].move_on_wasd(keys, self.dictionary_of_levels_objects[self.current_level])
             self.change_padding(left, top)
 
             if keys[pygame.K_d]:
@@ -157,7 +154,7 @@ class Canvas:
         """
 
         screen = self.screen.copy()
-        for layer in self.level_maps[self.current_level - 1].visible_layers:
+        for layer in self.level_map.visible_layers:
             if layer.__class__.__name__ == 'TiledTileLayer':
                 for x, y, gid in layer:
 
@@ -165,7 +162,7 @@ class Canvas:
                     layer - картеж вида (0, 0, 0), где первые 2 числа координаты по x и y, 
                     последняя индекс слоя, на котором мы и находим картинку
                     """
-                    tile = self.level_maps[self.current_level - 1].get_tile_image_by_gid(gid)
+                    tile = self.level_map.get_tile_image_by_gid(gid)
                     if tile is not None:
                         tile = pygame.transform.scale(tile, (self.tile_width, self.tile_width))
                         screen.blit(tile, (x * self.tile_width + self.left_padding,
@@ -178,7 +175,7 @@ class Canvas:
             self.inventory_group.draw(screen)
         else:
             for enemy in self.enemies:
-                enemy.move(self.dictionary_of_levels_objects[1])
+                enemy.move(self.dictionary_of_levels_objects[self.current_level])
         self.player_sprites.draw(screen)
         self.screen.blit(screen, (0, 0))
 
@@ -192,7 +189,7 @@ class Canvas:
         self.top_padding += top
 
         # пробегаемся по объектам Wall, и изменяем его положение в зависимости от переданных параметров
-        for walls_group in self.dictionary_of_levels_objects[1]:
+        for walls_group in self.dictionary_of_levels_objects[self.current_level]:
             for wall in walls_group:
                 wall.rect.x += left
                 wall.rect.y += top
