@@ -95,7 +95,7 @@ class Entity(pygame.sprite.Sprite):
         self.health = health
         self.size = 120
 
-        self.hp_bar = HPBar((position[0] + 20, position[1] + 120, 80, 15), group)
+        self.hp_bar = HPBar((position[0] + 20, position[1], 80, 8), group)
 
     def get_damage(self, damage):
         self.health -= damage
@@ -307,7 +307,7 @@ class HPBar(pygame.sprite.Sprite):
     def __init__(self, size, group):
         super().__init__(group)
         self.image = pygame.Surface((size[2], size[3]))
-        pygame.draw.rect(self.image, pygame.Color("green"), [0, 0,
+        pygame.draw.rect(self.image, pygame.Color("#68d37b"), [0, 0,
                                                              size[2], size[3]])
         pygame.draw.rect(self.image, pygame.Color("black"), [0, 0,
                                                              size[2], size[3]], 1)

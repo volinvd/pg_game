@@ -3,6 +3,8 @@ import os
 import sys
 from PyQt5 import uic  # Импортируем uic
 from PyQt5.QtWidgets import QApplication, QMainWindow
+from PyQt5.QtGui import QIcon
+from PyQt5.QtCore import QSize
 from program import map
 
 
@@ -60,7 +62,22 @@ class MenuWidget(QMainWindow):
         self.levels.setVisible(False)
         self.settings.clicked.connect(self.load_settings)
         self.new_game.clicked.connect(self.load_base_levels)
-        self.continue_game.clicked.connect(self.load_levels)
+
+        self.new_game.setIcon(QIcon('data/menu_ui/Начать.png'))
+        self.new_game.setIconSize(QSize(238, 70))
+
+        self.settings.setIcon(QIcon('data/menu_ui/Настройки.png'))
+        self.settings.setIconSize(QSize(238, 70))
+
+        self.first_level.setIcon(QIcon('data/menu_ui/Уровень1.png'))
+        self.first_level.setIconSize(QSize(68, 70))
+
+        self.second_level.setIcon(QIcon('data/menu_ui/Уровень2.png'))
+        self.second_level.setIconSize(QSize(68, 70))
+
+        self.third_level.setIcon(QIcon('data/menu_ui/Уровень3.png'))
+        self.third_level.setIconSize(QSize(68, 70))
+
 
     def load_settings(self):
         pass
@@ -70,16 +87,17 @@ class MenuWidget(QMainWindow):
         self.load_levels()
 
     def load_levels(self):
-        self.levels.setVisible(True)
-        self.main_menu.setVisible(False)
+        self.levels.show()
+        self.main_menu.hide()
 
         self.first_level.clicked.connect(self.load_game_level)
         self.second_level.clicked.connect(self.load_game_level)
         self.third_level.clicked.connect(self.load_game_level)
 
+
     def load_game_level(self):
         self.close()
-        main(int(self.sender().text().split()[1]))
+        main(int(self.sender().text()))
 
 
 if __name__ == '__main__':
