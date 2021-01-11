@@ -62,9 +62,9 @@ class Canvas:
 
         self.enemies = \
             [
-                Entities.BaseEnemy((2935, 2570), 'enemy', 100, self.enemy_sprites, 'up'),
-                Entities.BaseEnemy((4000, 2570), 'enemy', 100, self.enemy_sprites, 'up'),
-                Entities.BaseEnemy((1935, 2570), 'enemy', 100, self.enemy_sprites, 'up')
+                Entities.Orc((2935, 2570), 'enemy', 100, self.enemy_sprites, 'up'),
+                Entities.Orc((4000, 2570), 'enemy', 100, self.enemy_sprites, 'up'),
+                Entities.Orc((1935, 2570), 'enemy', 100, self.enemy_sprites, 'up')
             ]
         self.pets = []
         self.change_padding(-100, -100)
@@ -88,12 +88,13 @@ class Canvas:
             elif keys[pygame.K_a]:
                 self.players[0].move_direction = "left"
 
-            self.animate_sprite(keys)
+            self.animate_player_sprite(keys)
+            self.animate_enemies_sprites()
 
         if mouse is not None:
             pass
 
-    def animate_sprite(self, keys):
+    def animate_player_sprite(self, keys):
         if not keys[pygame.K_w] and not keys[pygame.K_a] and not keys[pygame.K_s] and not keys[pygame.K_d]:
             if self.players[0].move_direction == "right":
                 if random.randint(0, 100) > 70:
@@ -119,6 +120,17 @@ class Canvas:
                 self.players[0].update("move left")
             elif keys[pygame.K_s]:
                 self.players[0].update("move left")
+
+    def animate_enemies_sprites(self):
+        for enemy in self.enemies:
+
+            if enemy.move_direction == "right":
+                enemy.update("move right")
+            elif enemy.move_direction == "left":
+                enemy.update("move left")
+
+
+
 
     def set_screen(self, action):
         """

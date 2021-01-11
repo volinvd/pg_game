@@ -187,7 +187,7 @@ class Player(Entity):
                           "jump left": [(x, 14) for x in range(0, 6)],
                           "fall from the portal left": [(x, 15) for x in range(0, 7)]}
 
-        spritesheet_img = self.load_image("Adventurer Sprite Sheet v1.1.png", "data/sprites/spritesheets")
+        spritesheet_img = self.load_image("player.png", "data\sprites\spritesheets\entities")
         self.animate(spritesheet_img, 13, 16, self.rect.x, self.rect.y, sp_description)
 
         # получинеие данных из изображения персонажа
@@ -271,6 +271,7 @@ class BaseEnemy(Entity):
                 self.hp_bar.rect.y -= self.speed_by_y
             else:
                 self.direction = 'right'
+            self.move_direction = "right"
         if self.direction == 'right':
             flag = not any([any([pygame.sprite.collide_rect(self.collision_images[1], wall) for wall in wall_group])
                             for wall_group in level_walls])
@@ -281,6 +282,7 @@ class BaseEnemy(Entity):
                 self.hp_bar.rect.x += self.speed_by_x
             else:
                 self.direction = 'down'
+            self.move_direction = "right"
         if self.direction == 'down':
             flag = not any([any([pygame.sprite.collide_rect(self.collision_images[2], wall) for wall in wall_group])
                             for wall_group in level_walls])
@@ -291,6 +293,7 @@ class BaseEnemy(Entity):
                 self.hp_bar.rect.y += self.speed_by_y
             else:
                 self.direction = 'left'
+            self.move_direction = "left"
         if self.direction == 'left':
             flag = not any([any([pygame.sprite.collide_rect(self.collision_images[3], wall) for wall in wall_group])
                             for wall_group in level_walls])
@@ -301,6 +304,7 @@ class BaseEnemy(Entity):
                 self.hp_bar.rect.x -= self.speed_by_x
             else:
                 self.direction = 'up'
+            self.move_direction = "left"
 
 
 class HPBar(pygame.sprite.Sprite):
@@ -318,3 +322,23 @@ class HPBar(pygame.sprite.Sprite):
         self.rect.x += x
         self.rect.y += y
 
+
+class Orc(BaseEnemy):
+    def __init__(self, position, name, health, group, direction):
+        super().__init__(position, name, health, group, direction)
+
+        self.rect = self.image.get_rect()
+        self.rect.x, self.rect.y = position
+
+        sp_description = {"look around right": [(x, 0) for x in range(0, 7)],
+                          "move right": [(x, 1) for x in range(0, 8)],
+                          "beat right": [(x, 2) for x in range(0, 6)],
+                          "death right": [(x, 3) for x in range(0, 6)],
+                          "look around left": [(x, 6) for x in range(0, 7)],
+                          "move left": [(x, 7) for x in range(0, 8)],
+                          "beat left": [(x, 9) for x in range(0, 6)]}
+
+        spritesheet_img = self.load_image('orc.png', 'data/sprites/spritesheets/entities/')
+        self.animate(spritesheet_img, 8, 11, self.rect.x, self.rect.y, sp_description)
+
+        print(self.direction)
