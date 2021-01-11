@@ -26,7 +26,7 @@ class Canvas:
         self.opened_in_full_screen = True
 
         self.screen = self.set_screen("change_size_type")
-        self.filename_of_maps = ['data/maps/gob.tmx', 'data/maps/gob.tmx', 'data/maps/gob.tmx'][level - 1]
+        self.filename_of_maps = ['data/maps/gob.tmx', 'data/maps/first.tmx', 'data/maps/gob.tmx'][level - 1]
         self.level_map = pytmx.load_pygame(self.filename_of_maps)
         self.sizes = [self.level_map.height, self.level_map.width]
         self.current_level = level
