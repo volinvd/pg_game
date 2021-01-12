@@ -25,17 +25,28 @@ def main(level):
             if event.type == pygame.KEYUP and event.key == pygame.K_ESCAPE:
                 canvas.screen = canvas.set_screen("window_size")
 
-            if event.type == pygame.KEYUP and (event.key == pygame.K_e or event.key == pygame.K_i):
+            if event.type == pygame.KEYUP and \
+                    (event.key == pygame.K_e or event.key == pygame.K_i) and canvas.minimap.state == 'base':
                 if canvas.players[0].inventory_state == 'open':
                     canvas.players[0].inventory_state = 'close'
                 else:
                     canvas.players[0].inventory_state = 'open'
 
+            if event.type == pygame.KEYUP and event.key == pygame.K_m:
+                if canvas.minimap.state == 'base':
+                    canvas.minimap.state = 'open'
+                else:
+                    canvas.minimap.state = 'base'
+                    canvas.minimap.koef = 1
+                    canvas.minimap.top_padding = canvas.minimap.left_padding = 0
+
             if canvas.players[0].inventory_state == 'open':
                 canvas.set_inventory_cell_position(event)
+            if canvas.minimap.state == 'open':
+                canvas.set_minimap_position(event)
 
         keys = pygame.key.get_pressed()
-        if keys and canvas.players[0].inventory_state == 'close':
+        if keys and canvas.players[0].inventory_state == 'close' and canvas.minimap.state == 'base':
             """
             Если есть нажатые клавиши, вызывается передвижения метод игрока
             Он возвращает перемещения по оси x и y
@@ -79,7 +90,6 @@ class MenuWidget(QMainWindow):
         self.third_level.setIcon(QIcon('data/menu_ui/Уровень3.png'))
         self.third_level.setIconSize(QSize(68, 70))
 
-
     def load_settings(self):
         pass
 
@@ -94,7 +104,6 @@ class MenuWidget(QMainWindow):
         self.first_level.clicked.connect(self.load_game_level)
         self.second_level.clicked.connect(self.load_game_level)
         self.third_level.clicked.connect(self.load_game_level)
-
 
     def load_game_level(self):
         self.close()
