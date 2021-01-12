@@ -410,6 +410,9 @@ class MiniMap:
         """
         if self.state == 'base':
             screen_2 = pygame.Surface((500 * round(self.koef), 300 * round(self.koef)), pygame.SRCALPHA)
+            # фон для миникарты
+            pygame.draw.rect(screen_2, (51, 51, 51, 200), (0, 0,
+                                                           500 * round(self.koef), 300 * round(self.koef)))
             max_x = max_y = 0
             for layer in self.level_map.visible_layers:
                 if layer.__class__.__name__ == 'TiledTileLayer':
@@ -418,6 +421,7 @@ class MiniMap:
                         """
                         вот тут меняй цвет для миникарты
                         """
+
                         if gid == 6:
                             pygame.draw.rect(screen_2, '#a9a9a9', (x * self.tile_width * round(self.koef),
                                                                    y * self.tile_width * round(self.koef),

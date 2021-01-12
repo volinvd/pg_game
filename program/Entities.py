@@ -341,4 +341,3 @@ class Orc(BaseEnemy):
         spritesheet_img = self.load_image('orc.png', 'data/sprites/spritesheets/entities/')
         self.animate(spritesheet_img, 8, 11, self.rect.x, self.rect.y, sp_description)
 
-        print(self.direction)
