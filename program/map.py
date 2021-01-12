@@ -70,13 +70,13 @@ class Canvas:
                 [
                     Entities.Orc((2935, 2570), 'enemy', 100, self.enemy_sprites, 'up'),
                     Entities.Orc((4000, 2570), 'enemy', 100, self.enemy_sprites, 'up'),
-                    Entities.Orc((1935, 2100), 'enemy', 100, self.enemy_sprites, 'up')
+                    Entities.Orc((1935, 2000), 'enemy', 100, self.enemy_sprites, 'up')
                 ],
             3:
                 [
                     Entities.Orc((2935, 2570), 'enemy', 100, self.enemy_sprites, 'up'),
                     Entities.Orc((4000, 2570), 'enemy', 100, self.enemy_sprites, 'up'),
-                    Entities.Orc((1935, 2000), 'enemy', 100, self.enemy_sprites, 'up')
+                    Entities.Orc((1935, 2570), 'enemy', 100, self.enemy_sprites, 'up')
                 ]
         }
         self.pets = []
@@ -416,24 +416,21 @@ class MiniMap:
                     for x, y, gid in layer:
 
                         """
-                        layer - картеж вида (0, 0, 0), где первые 2 числа координаты по x и y, 
-                        последняя индекс слоя, на котором мы и находим картинку
+                        вот тут меняй цвет для миникарты
                         """
-                        tile = self.level_map.get_tile_image_by_gid(gid)
-                        if tile is not None:
-                            tile = pygame.transform.scale(tile, (self.tile_width * round(self.koef), self.tile_width* round(self.koef)))
-                            screen_2.blit(tile, (x * self.tile_width * round(self.koef),
-                                                 y * self.tile_width * round(self.koef)))
+                        if gid == 6:
+                            pygame.draw.rect(screen_2, '#a9a9a9', (x * self.tile_width * round(self.koef),
+                                                                   y * self.tile_width * round(self.koef),
+                                                                   self.tile_width * round(self.koef),
+                                                                   self.tile_width * round(self.koef)))
                         if x > max_x:
                             max_x = x
                         if y > max_y:
                             max_y = y
             x, y = (self.screen_size[0] - max_x * self.tile_width * round(self.koef),
                     self.screen_size[1] - max_y * self.tile_width * round(self.koef))
-            w, h = max_x * self.tile_width, max_y * self.tile_width
 
             screen.blit(screen_2, (x - 2, y - 2))
-            pygame.draw.rect(screen, 'red', [x - 2, y - 2, w * round(self.koef), h * round(self.koef)], 2)
             x, y, w, h = (-self.left_player_padding // 20 + x + self.player.rect.x // 32 * 5 - self.screen_size[0] // 20,
                           -self.top_player_padding // 20 + y + self.player.rect.y // 32 * 5 - self.screen_size[1] // 20,
                           self.player.rect.w // 32 * 5, self.player.rect.h // 32 * 5)
