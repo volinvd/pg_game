@@ -52,6 +52,7 @@ class Canvas:
                 'stairs': Stairs,
                 'bed': Bed,
                 'decorative_ax': DecorativeAx,
+                'air': Air,
             }
 
         self.dictionary_of_levels_objects = {}
@@ -79,8 +80,7 @@ class Canvas:
         """
 
         if keys is not None:
-
-            left, top = self.players[0].move_on_wasd(keys, self.dictionary_of_levels_objects[self.current_level])
+            left, top = self.players[0].move_with_keyboard(keys, self.dictionary_of_levels_objects[self.current_level])
             self.change_padding(left, top)
 
             if keys[pygame.K_d]:
@@ -91,8 +91,12 @@ class Canvas:
             self.animate_player_sprite(keys)
             self.animate_enemies_sprites()
 
-        if mouse is not None:
-            pass
+        elif mouse is not None:
+            path_increments = self.players[0].move_with_mouse_click(self.dictionary_of_levels_objects[1])
+
+            # Going through the list and using the function change_padding to move the player
+            for left, top in path_increments:
+                self.change_padding(left, top)
 
     def animate_player_sprite(self, keys):
         if not keys[pygame.K_w] and not keys[pygame.K_a] and not keys[pygame.K_s] and not keys[pygame.K_d]:
@@ -331,4 +335,8 @@ class Bed(Obstacle):
 
 
 class DecorativeAx(Obstacle):
+    pass
+
+
+class Air(Obstacle):
     pass
