@@ -71,7 +71,7 @@ class Canvas:
                 [
                     Entities.Orc((2935, 2570), 'enemy', 100, self.enemy_sprites, 'up'),
                     Entities.Orc((4000, 2570), 'enemy', 100, self.enemy_sprites, 'up'),
-                    Entities.Orc((1935, 2000), 'enemy', 100, self.enemy_sprites, 'up')
+                    Entities.Orc((2935, 800), 'enemy', 100, self.enemy_sprites, 'up')
                 ],
             3:
                 [
@@ -183,7 +183,13 @@ class Canvas:
         """
         Пробегается по видимым слоям текущего уровня и отрисовывает их на экране
         """
-
+        length = len(self.enemies[self.current_level])
+        self.enemies[self.current_level] = [enemy for enemy in self.enemies[self.current_level] if enemy.health > 0]
+        if len(self.enemies[self.current_level]) != length:
+            self.enemy_sprites = pygame.sprite.Group()
+            for enemy in self.enemies[self.current_level]:
+                self.enemy_sprites.add(enemy)
+                self.enemy_sprites.add(enemy.hp_bar)
         screen = self.screen.copy()
         for layer in self.level_map.visible_layers:
             if layer.__class__.__name__ == 'TiledTileLayer':

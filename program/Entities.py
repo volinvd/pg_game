@@ -11,9 +11,9 @@ class CollisionImage(pygame.sprite.Sprite):
             super().__init__(group)
 
         if shape == 'rect':
-            self.image = pygame.Surface((size[2], size[3]))
-            pygame.draw.rect(self.image, pygame.Color("white"), [size[0], size[1],
-                                                                size[2], size[3]])
+            self.image = pygame.Surface((size[2], size[3]), pygame.SRCALPHA)
+            pygame.draw.rect(self.image, pygame.Color("white"), [0, 0,
+                                                                 size[2], size[3]], 1)
             self.rect = pygame.Rect(size[0], size[1], size[2], size[3])
         elif shape == 'circle':
             self.image = pygame.Surface((size[0] + size[2] * 2, size[1] + size[2] * 2), pygame.SRCALPHA)
@@ -192,11 +192,41 @@ class Entity(pygame.sprite.Sprite):
 
             # Going through the list of adjacent nodes to find the best one
             for index, (x_coord, y_coord) in enumerate(possible_node_positions):
-                obstacle_in_node = any([any([any([pygame.sprite.collide_rect(collision_image, wall)
-                                                  for wall in wall_group]) for wall_group in level_walls])
-                                        for collision_image in collision_images])
+                obstacle_in_node = False
 
                 # Checking if the adjacent node has an obstacle in it
+                if index == 0:
+                    obstacle_in_node = any([any([pygame.sprite.collide_rect(collision_images[0], wall) for wall in
+                                                 wall_group]) for wall_group in level_walls])
+                elif index == 1:
+                    obstacle_in_node = any([any([pygame.sprite.collide_rect(collision_images[2], wall) for wall in
+                                                 wall_group]) for wall_group in level_walls])
+                elif index == 2:
+                    obstacle_in_node = any([any([pygame.sprite.collide_rect(collision_images[3], wall) for wall in
+                                                 wall_group]) for wall_group in level_walls])
+                elif index == 3:
+                    obstacle_in_node = any([any([pygame.sprite.collide_rect(collision_images[1], wall) for wall in
+                                                 wall_group]) for wall_group in level_walls])
+                elif index == 4:
+                    obstacle_in_node = any([any([any([pygame.sprite.collide_rect(collision_images[0], wall)
+                                                     for wall in wall_group]) for wall_group in level_walls]),
+                                           any([any([pygame.sprite.collide_rect(collision_images[3], wall)
+                                                     for wall in wall_group]) for wall_group in level_walls])])
+                elif index == 5:
+                    obstacle_in_node = any([any([any([pygame.sprite.collide_rect(collision_images[2], wall)
+                                                      for wall in wall_group]) for wall_group in level_walls]),
+                                            any([any([pygame.sprite.collide_rect(collision_images[3], wall)
+                                                      for wall in wall_group]) for wall_group in level_walls])])
+                elif index == 6:
+                    obstacle_in_node = any([any([any([pygame.sprite.collide_rect(collision_images[0], wall)
+                                                      for wall in wall_group]) for wall_group in level_walls]),
+                                            any([any([pygame.sprite.collide_rect(collision_images[1], wall)
+                                                      for wall in wall_group]) for wall_group in level_walls])])
+                elif index == 7:
+                    obstacle_in_node = any([any([any([pygame.sprite.collide_rect(collision_images[1], wall)
+                                                      for wall in wall_group]) for wall_group in level_walls]),
+                                            any([any([pygame.sprite.collide_rect(collision_images[2], wall)
+                                                      for wall in wall_group]) for wall_group in level_walls])])
 
                 # If there is no obstacle in the node, the player could go into it
                 if not obstacle_in_node:
@@ -242,6 +272,7 @@ class Entity(pygame.sprite.Sprite):
 class Player(Entity):
     def __init__(self, position, name, health, group, screen_size, inventory_group):
         super().__init__(position, name, health, group)
+        self.group = group
 
         """
         obstacles - список, который хранит то, с чем персонаж не может контактировать (стена, преграда)
@@ -283,7 +314,7 @@ class Player(Entity):
                                  CollisionImage((x + 20, y + h + 10, w - 40, 10)),
                                  CollisionImage((x, y + 20, 10, h - 20))]
 
-        self.vision = CollisionImage((x, y, self.size), shape="circle")
+        self.vision = CollisionImage((x + self.size // 2, y + self.size // 2, self.size // 2), shape="circle")
 
         self.change_inventory_cell_position = False
         self.first_inventory_cell = self.second_inventory_cell = None
@@ -292,6 +323,7 @@ class Player(Entity):
                                    inventory_group)
         self.inventory_state = 'close'
         self.screen_size = screen_size
+        self.damage_img = CollisionImage((self.rect.x - 50, self.rect.y - 50, 200, 200))
 
     def move_with_keyboard(self, keys, level_walls):
 
@@ -379,6 +411,11 @@ class Player(Entity):
 
         return path_increments
 
+    def attack_with_mouse_click(self, enemies):
+        for enemy in enemies:
+            if pygame.sprite.collide_rect(self.damage_img, enemy):
+                enemy.get_damage(10)
+
 
 class BaseEnemy(Entity):
     def __init__(self, position, name, health, group, direction):
@@ -395,7 +432,7 @@ class BaseEnemy(Entity):
         self.direction = direction
         self.speed_by_y = self.speed_by_x = 5
 
-        self.vision = CollisionImage((x, y, self.size * 3), shape="circle")
+        self.vision = CollisionImage((x + self.size // 2, y + self.size // 2, int(self.size * 1.5)), shape="circle")
 
     def move(self, level_walls, direction=None):
         self.direction = direction if direction is not None else self.direction
@@ -557,8 +594,8 @@ class Orc(BaseEnemy):
                           "beat left": [(x, 9) for x in range(0, 6)]}
 
         spritesheet_img = self.load_image('orc.png', 'data/sprites/spritesheets/entities/')
-
         self.animate(spritesheet_img, 8, 11, self.rect.x, self.rect.y, sp_description)
+
         self.rect.x -= 20
         self.rect.y -= 20
         self.rect.w += 40
