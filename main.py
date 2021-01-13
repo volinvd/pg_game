@@ -83,6 +83,8 @@ class MenuWidget(QMainWindow):
 
     def setupUI(self):
         self.levels.setVisible(False)
+        self.back_to_menu.setVisible(False)
+
         self.settings.clicked.connect(self.load_settings)
         self.new_game.clicked.connect(self.load_base_levels)
 
@@ -110,11 +112,19 @@ class MenuWidget(QMainWindow):
 
     def load_levels(self):
         self.levels.show()
+        self.back_to_menu.show()
         self.main_menu.hide()
 
+        self.back_to_menu.clicked.connect(self.load_main_menu)
         self.first_level.clicked.connect(self.load_game_level)
         self.second_level.clicked.connect(self.load_game_level)
         self.third_level.clicked.connect(self.load_game_level)
+
+    def load_main_menu(self):
+        self.levels.setVisible(False)
+        self.back_to_menu.setVisible(False)
+
+        self.main_menu.show()
 
     def load_game_level(self):
         self.close()
