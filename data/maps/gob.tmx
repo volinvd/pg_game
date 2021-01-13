@@ -8,7 +8,7 @@
  </tileset>
  <layer id="11" name="фон" width="56" height="34">
   <data encoding="base64" compression="zlib">
-   eJzt1UEOgCAMRNFuvP8RuCo3MBKw06F/8ZdqXwNxRMQgIkru2Uw9/9++6jvA19v35b1KX8be1LPgWzfhe3+m4o7w3elz/4dmWNUeB9/Jb1a8f/i87w6+Xr6MXeHzOAtuvlN+9Zz4evqIujQBVF+L1A==
+   eJztmcEOhDAIRLn4/3vv0X7onpqYxlaEGbC7HiZu1FUepRBwF5H9j1Runm+qynOrqHa/R3xXjFfXe7+WybVXz1QBrtXxOZtTHjtYexfJ5/FB45vtP6+i+KrochFakXztGJkTWbE3u4fNF+E/VA5aja/ff8i6wOaz1hB2ztHk5yLXvp7xjf4XUWc9/tTUUsuaM/msPliNb7aOZ/HGrqGWmGLF7qp8WmXyoWzSPgvxTkSMvXy+2IqaO4z6FDZftiL4MudFrP2H8M0niW80Q8yObUScjOYnT+Br9nn6r7NeDh0rHrajfZYZlqdvy869/boW0fWADD5tbln5W0gmn7UfRttwx47aHX9NWfNmi77wh6EO
   </data>
  </layer>
  <layer id="12" name="стены" width="56" height="34">
