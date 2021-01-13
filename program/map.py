@@ -192,7 +192,7 @@ class Canvas:
                 if not enemy.player_in_vision(self.players[0].vision):
                     enemy.move(self.dictionary_of_levels_objects[self.current_level])
                 else:
-                    print(enemy.player_in_vision)
+                    pass
 
         self.screen.blit(screen, (0, 0))
 

@@ -13,7 +13,7 @@ def main(level):
 
     canvas = map.Canvas(level)
     running = True
-    control_mode = 'mouse'
+    control_mode = 'keyboard'
 
     while running:
         for event in pygame.event.get():
