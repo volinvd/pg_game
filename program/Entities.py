@@ -580,6 +580,7 @@ class HPBar(pygame.sprite.Sprite):
 
 class Orc(BaseEnemy):
     def __init__(self, position, name, health, group, direction):
+        print(position, name, health, group, direction)
         super().__init__(position, name, health, group, direction)
 
         self.rect = self.image.get_rect()

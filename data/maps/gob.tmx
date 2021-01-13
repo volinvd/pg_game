@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.4" tiledversion="1.4.3" orientation="orthogonal" renderorder="right-down" width="56" height="34" tilewidth="16" tileheight="16" infinite="0" nextlayerid="17" nextobjectid="121">
+<map version="1.4" tiledversion="1.4.3" orientation="orthogonal" renderorder="right-down" width="56" height="34" tilewidth="16" tileheight="16" infinite="0" nextlayerid="17" nextobjectid="126">
  <tileset firstgid="1" name="goblinhouse" tilewidth="16" tileheight="16" tilecount="135" columns="9">
   <image source="../sprites/spritesheets/tiles/goblinhouse.png" width="150" height="250"/>
  </tileset>
@@ -70,5 +70,10 @@
   <object id="111" name="stairs" x="431.909" y="207.909" width="16.1818" height="16.1818"/>
   <object id="112" name="decorative_ax" x="256.938" y="290.938" width="13.0625" height="9.125"/>
   <object id="113" name="decorative_ax" x="288.719" y="291" width="13.0625" height="9.125"/>
+  <object id="121" name="enemy" x="495" y="99" width="15" height="15"/>
+  <object id="122" name="enemy" x="333.833" y="306.833" width="15" height="15"/>
+  <object id="123" name="enemy" x="728.5" y="462.5" width="15" height="15"/>
+  <object id="124" name="enemy" x="639.5" y="226.167" width="15" height="15"/>
+  <object id="125" name="enemy" x="433.167" y="238.167" width="15" height="15"/>
  </objectgroup>
 </map>

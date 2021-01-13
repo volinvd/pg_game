@@ -53,33 +53,24 @@ class Canvas:
                 'bed': Bed,
                 'decorative_ax': DecorativeAx,
                 'air': Air,
+                'enemy': ''
             }
 
         self.dictionary_of_levels_objects = {
             level: [[self.dictionary_of_types[obj.name](obj, self.tile_width, self.level_map.tilewidth)
                      for obj in object_groups if self.dictionary_of_types[obj.name]]
                     for object_groups in self.level_map.objectgroups]}
-
+        level_enemies = [[Entities.Orc((int(obj.x * self.tile_width / self.level_map.tilewidth),
+                                        int(obj.y * self.tile_width / self.level_map.tilewidth)), 'enemy', 100,
+                                       self.enemy_sprites, 'up')
+                          for obj in object_groups if obj.name == 'enemy']
+                         for object_groups in self.level_map.objectgroups]
+        level_enemies = [[enemies for enemies in enemies_list if enemies]
+                         for enemies_list in level_enemies if enemies_list][0]
         self.enemies = {
-            1:
-                [
-                    Entities.Orc((2935, 2570), 'enemy', 100, self.enemy_sprites, 'up'),
-                    Entities.Orc((4000, 2570), 'enemy', 100, self.enemy_sprites, 'up'),
-                    Entities.Orc((1935, 2570), 'enemy', 100, self.enemy_sprites, 'up')
-                ],
-            2:
-                [
-                    Entities.Orc((2935, 2570), 'enemy', 100, self.enemy_sprites, 'up'),
-                    Entities.Orc((4000, 2570), 'enemy', 100, self.enemy_sprites, 'up'),
-                    Entities.Orc((2935, 800), 'enemy', 100, self.enemy_sprites, 'up')
-                ],
-            3:
-                [
-                    Entities.Orc((2935, 2570), 'enemy', 100, self.enemy_sprites, 'up'),
-                    Entities.Orc((4000, 2570), 'enemy', 100, self.enemy_sprites, 'up'),
-                    Entities.Orc((1935, 2570), 'enemy', 100, self.enemy_sprites, 'up')
-                ]
+            level: level_enemies
         }
+
         self.pets = []
         self.minimap = MiniMap(self.level_map, self.players[0], self.window_size)
         dict_of_changing_padding = {1: (-100, -100),
