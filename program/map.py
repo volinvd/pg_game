@@ -211,7 +211,7 @@ class Canvas:
                     if not enemy.player_in_vision(self.players[0].vision):
                         enemy.move(self.dictionary_of_levels_objects[self.current_level])
                     else:
-                        enemy.chase_player(self.dictionary_of_levels_objects[self.current_level], self.players[0].rect)
+                        enemy.chase_player(self.dictionary_of_levels_objects[self.current_level], self.players[0])
 
         self.minimap.render(screen)
         self.screen.blit(screen, (0, 0))

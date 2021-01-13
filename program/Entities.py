@@ -106,6 +106,10 @@ class Entity(pygame.sprite.Sprite):
 
     def get_damage(self, damage):
         self.health -= damage
+        if self.health > 6:
+            self.hp_bar.change_width(damage)
+        else:
+            self.die()
 
     def load_image(self, name, directory, color_key=None):
 
@@ -260,6 +264,9 @@ class Entity(pygame.sprite.Sprite):
             closed_node_list.append(best_node)
         # If the path couldn't be found, function returns None
         return None
+
+    def die(self):
+        pass
 
 
 class Player(Entity):
@@ -422,6 +429,8 @@ class BaseEnemy(Entity):
 
     def move(self, level_walls, direction=None):
         self.direction = direction if direction is not None else self.direction
+        self.speed_by_x = 17 if direction is not None else 5
+        self.speed_by_y = 17 if direction is not None else 5
         if self.direction == 'up':
             flag = not any([any([pygame.sprite.collide_rect(self.collision_images[0], wall) for wall in wall_group])
                             for wall_group in level_walls])
@@ -474,52 +483,65 @@ class BaseEnemy(Entity):
     def player_in_vision(self, player_vision):
         return pygame.sprite.collide_circle(self.vision, player_vision)
 
-    def chase_player(self, level_walls, player_coords):
-        path = Entity.a_star_pathfinding(self, level_walls,
-                                         (self.rect.x + self.size // 2, self.rect.y + self.size // 2),
-                                         player_coords, self.collision_images)
+    def chase_player(self, level_walls, player):
+        player_coords = player.rect
+        if not pygame.sprite.collide_rect(self, player):
+            path = Entity.a_star_pathfinding(self, level_walls,
+                                             (self.rect.x + self.size // 2, self.rect.y + self.size // 2),
+                                             player_coords, self.collision_images)
 
-        # If the algorithm found the path we divide given path by increments equal to self.speed_by_x/y
-        if path is not None:
+            # If the algorithm found the path we divide given path by increments equal to self.speed_by_x/y
+            if path is not None:
 
-            # Going through the path list
-            for index, (current_node_x, current_node_y) in enumerate(path[:-1]):
-                next_node_x, next_node_y = path[index + 1][0], path[index + 1][1]
+                # Going through the path list
+                for index, (current_node_x, current_node_y) in enumerate(path[:-1]):
+                    next_node_x, next_node_y = path[index + 1][0], path[index + 1][1]
 
-                # Getting the amount of increments by finding distance between current
-                # and next node and dividing it by self.speed_by_x
-                amount_of_increments = round(round(((current_node_x - next_node_x) ** 2 +
-                                                    (current_node_y - next_node_y) ** 2) ** 0.5) // self.speed_by_x)
-                # Dividing our path into increments
-                for _ in range(amount_of_increments):
-                    if current_node_x + self.size == next_node_x and current_node_y + self.size == next_node_y:
-                        self.move(level_walls, 'down')
-                        self.move(level_walls, 'right')
-                    elif current_node_x + self.size == next_node_x and current_node_y - self.size == next_node_y:
-                        self.move(level_walls, 'up')
-                        self.move(level_walls, 'right')
-                    elif current_node_x - self.size == next_node_x and current_node_y + self.size == next_node_y:
-                        self.move(level_walls, 'down')
-                        self.move(level_walls, 'left')
-                    elif current_node_x - self.size == next_node_x and current_node_y - self.size == next_node_y:
-                        self.move(level_walls, 'up')
-                        self.move(level_walls, 'left')
-                    elif current_node_x + self.size == next_node_x:
-                        self.move(level_walls, 'right')
-                    elif current_node_x - self.size == next_node_x:
-                        self.move(level_walls, 'left')
-                    elif current_node_y + self.size == next_node_y:
-                        self.move(level_walls, 'down')
-                    elif current_node_y - self.size == next_node_y:
-                        self.move(level_walls, 'up')
+                    # Getting the amount of increments by finding distance between current
+                    # and next node and dividing it by self.speed_by_x
+                    amount_of_increments = round(round(((current_node_x - next_node_x) ** 2 +
+                                                        (current_node_y - next_node_y) ** 2) ** 0.5) // self.speed_by_x)
+                    # Dividing our path into increments
+                    for _ in range(amount_of_increments):
+                        if current_node_x + self.size == next_node_x and current_node_y + self.size == next_node_y:
+                            self.move(level_walls, 'down')
+                            self.move(level_walls, 'right')
+                            break
+                        elif current_node_x + self.size == next_node_x and current_node_y - self.size == next_node_y:
+                            self.move(level_walls, 'up')
+                            self.move(level_walls, 'right')
+                            break
+                        elif current_node_x - self.size == next_node_x and current_node_y + self.size == next_node_y:
+                            self.move(level_walls, 'down')
+                            self.move(level_walls, 'left')
+                            break
+                        elif current_node_x - self.size == next_node_x and current_node_y - self.size == next_node_y:
+                            self.move(level_walls, 'up')
+                            self.move(level_walls, 'left')
+                            break
+                        elif current_node_x + self.size == next_node_x:
+                            self.move(level_walls, 'right')
+                            break
+                        elif current_node_x - self.size == next_node_x:
+                            self.move(level_walls, 'left')
+                            break
+                        elif current_node_y + self.size == next_node_y:
+                            self.move(level_walls, 'down')
+                            break
+                        elif current_node_y - self.size == next_node_y:
+                            self.move(level_walls, 'up')
+                            break
+
+        else:
+            player.get_damage(1)
 
 
 class HPBar(pygame.sprite.Sprite):
     def __init__(self, size, group):
         super().__init__(group)
-        self.image = pygame.Surface((size[2], size[3]))
+        self.image = pygame.Surface((size[2], size[3]), pygame.SRCALPHA)
         pygame.draw.rect(self.image, pygame.Color("#68d37b"), [0, 0,
-                                                             size[2], size[3]])
+                                                               size[2], size[3]])
         pygame.draw.rect(self.image, pygame.Color("black"), [0, 0,
                                                              size[2], size[3]], 1)
         self.rect = pygame.Rect(size[0], size[1], size[2], size[3])
@@ -528,6 +550,16 @@ class HPBar(pygame.sprite.Sprite):
     def update_coord(self, x, y):
         self.rect.x += x
         self.rect.y += y
+
+    def change_width(self, damage):
+        size = self.rect.x, self.rect.y, self.rect.w, self.rect.h
+        if len([item for item in size if item > 0]) == 4:
+            self.image = pygame.Surface((self.max_hp, size[3]), pygame.SRCALPHA)
+            pygame.draw.rect(self.image, pygame.Color("#68d37b"), [0, 0,
+                                                                   size[2] - damage, size[3]])
+            pygame.draw.rect(self.image, pygame.Color("black"), [0, 0,
+                                                                 self.max_hp, size[3]], 1)
+            self.rect = pygame.Rect(size[0], size[1], size[2] - damage, size[3])
 
 
 class Orc(BaseEnemy):
