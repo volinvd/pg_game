@@ -129,9 +129,6 @@ class Canvas:
             elif enemy.move_direction == "left":
                 enemy.update("move left")
 
-
-
-
     def set_screen(self, action):
         """
         Accepts two types of action "window_size" and "change_size_type".
@@ -182,13 +179,17 @@ class Canvas:
 
         self.pet_sprites.draw(screen)
         self.enemy_sprites.draw(screen)
+        self.player_sprites.draw(screen)
 
         if self.players[0].inventory_state == 'open':
             self.inventory_group.draw(screen)
         else:
             for enemy in self.enemies:
-                enemy.move(self.dictionary_of_levels_objects[self.current_level])
-        self.player_sprites.draw(screen)
+                if not enemy.player_in_vision(self.players[0].vision):
+                    enemy.move(self.dictionary_of_levels_objects[self.current_level])
+                else:
+                    print(enemy.player_in_vision)
+
         self.screen.blit(screen, (0, 0))
 
     def change_padding(self, left=0, top=0):

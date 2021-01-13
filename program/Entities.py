@@ -5,13 +5,20 @@ import random
 
 
 class CollisionImage(pygame.sprite.Sprite):
-    def __init__(self, size, group=None):
+    def __init__(self, size, shape="rect", group=None):
+
         if group is not None:
             super().__init__(group)
-        self.image = pygame.Surface((size[2], size[3]))
-        pygame.draw.rect(self.image, pygame.Color("white"), [size[0], size[1],
-                                                             size[2], size[3]])
-        self.rect = pygame.Rect(size[0], size[1], size[2], size[3])
+
+        if shape == 'rect':
+            self.image = pygame.Surface((size[2], size[3]))
+            pygame.draw.rect(self.image, pygame.Color("white"), [size[0], size[1],
+                                                                size[2], size[3]])
+            self.rect = pygame.Rect(size[0], size[1], size[2], size[3])
+        elif shape == 'circle':
+            self.image = pygame.Surface((size[0] + size[2] * 2, size[1] + size[2] * 2))
+            pygame.draw.circle(self.image, pygame.Color("white"), (size[0], size[1]), size[2])
+            self.rect = self.image.get_rect()
 
     def update_coord(self, x, y):
         self.rect.x += x
@@ -199,6 +206,8 @@ class Player(Entity):
                                  CollisionImage((x + 20, y + h + 10, w - 40, 10)),
                                  CollisionImage((x, y + 20, 10, h - 20))]
 
+        self.vision = CollisionImage((x + self.size // 2, y + self.size // 2, self.size), shape="circle")
+
         self.change_inventory_cell_position = False
         self.first_inventory_cell = self.second_inventory_cell = None
         self.difference_x = self.difference_y = 0
@@ -260,6 +269,8 @@ class BaseEnemy(Entity):
         self.direction = direction
         self.speed_by_y = self.speed_by_x = 5
 
+        self.vision = CollisionImage((x + self.size // 2, y + self.size // 2, int(self.size * 1.5)), shape="circle")
+
     def move(self, level_walls):
         if self.direction == 'up':
             flag = not any([any([pygame.sprite.collide_rect(self.collision_images[0], wall) for wall in wall_group])
@@ -269,10 +280,11 @@ class BaseEnemy(Entity):
                 for collision_img in self.collision_images:
                     collision_img.rect.y -= self.speed_by_y
                 self.hp_bar.rect.y -= self.speed_by_y
+                self.vision.rect.y -= self.speed_by_y
             else:
                 self.direction = 'right'
             self.move_direction = "right"
-        if self.direction == 'right':
+        elif self.direction == 'right':
             flag = not any([any([pygame.sprite.collide_rect(self.collision_images[1], wall) for wall in wall_group])
                             for wall_group in level_walls])
             if flag:
@@ -280,10 +292,11 @@ class BaseEnemy(Entity):
                 for collision_img in self.collision_images:
                     collision_img.rect.x += self.speed_by_x
                 self.hp_bar.rect.x += self.speed_by_x
+                self.vision.rect.x += self.speed_by_x
             else:
                 self.direction = 'down'
             self.move_direction = "right"
-        if self.direction == 'down':
+        elif self.direction == 'down':
             flag = not any([any([pygame.sprite.collide_rect(self.collision_images[2], wall) for wall in wall_group])
                             for wall_group in level_walls])
             if flag:
@@ -291,10 +304,11 @@ class BaseEnemy(Entity):
                 for collision_img in self.collision_images:
                     collision_img.rect.y += self.speed_by_y
                 self.hp_bar.rect.y += self.speed_by_y
+                self.vision.rect.y += self.speed_by_y
             else:
                 self.direction = 'left'
             self.move_direction = "left"
-        if self.direction == 'left':
+        elif self.direction == 'left':
             flag = not any([any([pygame.sprite.collide_rect(self.collision_images[3], wall) for wall in wall_group])
                             for wall_group in level_walls])
             if flag:
@@ -302,9 +316,16 @@ class BaseEnemy(Entity):
                 for collision_img in self.collision_images:
                     collision_img.rect.x -= self.speed_by_x
                 self.hp_bar.rect.x -= self.speed_by_x
+                self.vision.rect.x -= self.speed_by_x
             else:
                 self.direction = 'up'
             self.move_direction = "left"
+
+    def player_in_vision(self, player_vision):
+        print(pygame.sprite.collide_circle(self.vision, player_vision))
+
+    def chase_player(self):
+        pass
 
 
 class HPBar(pygame.sprite.Sprite):
