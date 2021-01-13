@@ -420,7 +420,8 @@ class BaseEnemy(Entity):
 
         self.vision = CollisionImage((x + self.size // 2, y + self.size // 2, int(self.size * 1.5)), shape="circle")
 
-    def move(self, level_walls):
+    def move(self, level_walls, direction=None):
+        self.direction = direction if direction is not None else self.direction
         if self.direction == 'up':
             flag = not any([any([pygame.sprite.collide_rect(self.collision_images[0], wall) for wall in wall_group])
                             for wall_group in level_walls])
@@ -492,69 +493,25 @@ class BaseEnemy(Entity):
                 # Dividing our path into increments
                 for _ in range(amount_of_increments):
                     if current_node_x + self.size == next_node_x and current_node_y + self.size == next_node_y:
-                        self.rect.y += self.speed_by_y
-                        self.rect.x += self.speed_by_x
-
-                        for collision_img in self.collision_images:
-                            collision_img.rect.y += self.speed_by_y
-                            collision_img.rect.x += self.speed_by_x
-                        self.hp_bar.rect.y += self.speed_by_y
-                        self.vision.rect.x += self.speed_by_x
+                        self.move(level_walls, 'down')
+                        self.move(level_walls, 'right')
                     elif current_node_x + self.size == next_node_x and current_node_y - self.size == next_node_y:
-                        self.rect.y -= self.speed_by_y
-                        self.rect.x += self.speed_by_x
-
-                        for collision_img in self.collision_images:
-                            collision_img.rect.y -= self.speed_by_y
-                            collision_img.rect.x += self.speed_by_x
-                        self.hp_bar.rect.y -= self.speed_by_y
-                        self.vision.rect.x += self.speed_by_x
+                        self.move(level_walls, 'up')
+                        self.move(level_walls, 'right')
                     elif current_node_x - self.size == next_node_x and current_node_y + self.size == next_node_y:
-                        self.rect.y += self.speed_by_y
-                        self.rect.x -= self.speed_by_x
-
-                        for collision_img in self.collision_images:
-                            collision_img.rect.y += self.speed_by_y
-                            collision_img.rect.x -= self.speed_by_x
-                        self.hp_bar.rect.y += self.speed_by_y
-                        self.vision.rect.x -= self.speed_by_x
+                        self.move(level_walls, 'down')
+                        self.move(level_walls, 'left')
                     elif current_node_x - self.size == next_node_x and current_node_y - self.size == next_node_y:
-                        self.rect.y -= self.speed_by_y
-                        self.rect.x -= self.speed_by_x
-
-                        for collision_img in self.collision_images:
-                            collision_img.rect.y -= self.speed_by_y
-                            collision_img.rect.x -= self.speed_by_x
-                        self.hp_bar.rect.y -= self.speed_by_y
-                        self.vision.rect.x -= self.speed_by_x
+                        self.move(level_walls, 'up')
+                        self.move(level_walls, 'left')
                     elif current_node_x + self.size == next_node_x:
-                        self.rect.x += self.speed_by_x
-
-                        for collision_img in self.collision_images:
-                            collision_img.rect.x += self.speed_by_x
-                        self.hp_bar.rect.x += self.speed_by_x
-                        self.vision.rect.x += self.speed_by_x
+                        self.move(level_walls, 'right')
                     elif current_node_x - self.size == next_node_x:
-                        self.rect.x -= self.speed_by_x
-
-                        for collision_img in self.collision_images:
-                            collision_img.rect.x -= self.speed_by_x
-                        self.hp_bar.rect.x -= self.speed_by_x
-                        self.vision.rect.x -= self.speed_by_x
+                        self.move(level_walls, 'left')
                     elif current_node_y + self.size == next_node_y:
-                        self.rect.y += self.speed_by_y
-
-                        for collision_img in self.collision_images:
-                            collision_img.rect.y += self.speed_by_y
-                        self.hp_bar.rect.y += self.speed_by_y
-                        self.vision.rect.y += self.speed_by_y
+                        self.move(level_walls, 'down')
                     elif current_node_y - self.size == next_node_y:
-                        self.rect.y -= self.speed_by_y
-
-                        for collision_img in self.collision_images:
-                            collision_img.rect.y -= self.speed_by_y
-                        self.hp_bar.rect.y -= self.speed_by_y
-                        self.vision.rect.y -= self.speed_by_y
+                        self.move(level_walls, 'up')
 
 
 class HPBar(pygame.sprite.Sprite):
@@ -591,4 +548,3 @@ class Orc(BaseEnemy):
         spritesheet_img = self.load_image('orc.png', 'data/sprites/spritesheets/entities/')
         self.animate(spritesheet_img, 8, 11, self.rect.x, self.rect.y, sp_description)
 
-        print(self.direction)

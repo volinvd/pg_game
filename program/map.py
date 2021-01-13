@@ -144,7 +144,7 @@ class Canvas:
                 self.players[0].update("move left")
 
     def animate_enemies_sprites(self):
-        for enemy in self.enemies:
+        for enemy in self.enemies[self.current_level]:
 
             if enemy.move_direction == "right":
                 enemy.update("move right")
@@ -208,7 +208,10 @@ class Canvas:
                 self.inventory_group.draw(screen)
             else:
                 for enemy in self.enemies[self.current_level]:
-                    enemy.move(self.dictionary_of_levels_objects[self.current_level])
+                    if not enemy.player_in_vision(self.players[0].vision):
+                        enemy.move(self.dictionary_of_levels_objects[self.current_level])
+                    else:
+                        enemy.chase_player(self.dictionary_of_levels_objects[self.current_level], self.players[0].rect)
 
         self.minimap.render(screen)
         self.screen.blit(screen, (0, 0))
@@ -221,6 +224,8 @@ class Canvas:
 
         self.left_padding += left
         self.top_padding += top
+        self.minimap.left_player_padding += left
+        self.minimap.top_player_padding += top
 
         # пробегаемся по объектам Wall, и изменяем его положение в зависимости от переданных параметров
         for walls_group in self.dictionary_of_levels_objects[self.current_level]:
@@ -228,7 +233,7 @@ class Canvas:
                 wall.rect.x += left
                 wall.rect.y += top
 
-        for enemy in self.enemies:
+        for enemy in self.enemies[self.current_level]:
             enemy.rect.x += left
             enemy.rect.y += top
             for collision_img in enemy.collision_images:
@@ -448,6 +453,7 @@ class MiniMap:
             x, y, w, h = (-self.left_player_padding // 20 + x + self.player.rect.x // 32 * 5 - self.screen_size[0] // 20,
                           -self.top_player_padding // 20 + y + self.player.rect.y // 32 * 5 - self.screen_size[1] // 20,
                           self.player.rect.w // 32 * 5, self.player.rect.h // 32 * 5)
+
             pygame.draw.rect(screen, 'blue', [x - 2, y - 2, w * round(self.koef), h * round(self.koef)])
         else:
 
