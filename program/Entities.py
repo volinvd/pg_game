@@ -97,6 +97,7 @@ class Entity(pygame.sprite.Sprite):
         self.rect.x, self.rect.y = position
 
         self.speed_by_x, self.speed_by_y = 15, 15
+        self.death = False
 
         self.name = name
         self.health = health
@@ -105,11 +106,12 @@ class Entity(pygame.sprite.Sprite):
         self.hp_bar = HPBar((position[0] + 20, position[1], 80, 8), group)
 
     def get_damage(self, damage):
-        self.health -= damage
-        if self.health > 6:
-            self.hp_bar.change_width(damage)
-        else:
-            self.die()
+        if not self.death:
+            self.health -= damage
+            if self.health > 0:
+                self.hp_bar.change_width(damage)
+            else:
+                self.die()
 
     def load_image(self, name, directory, color_key=None):
 
@@ -150,120 +152,122 @@ class Entity(pygame.sprite.Sprite):
         # print(self.sp_description)
 
     def update(self, direction):
-        if self.cur_frame[0] == direction:
-            # print("in", self.cur_frame[1], direction)
-            if self.cur_frame[1] - 1 == len(self.frames[direction]) or \
-                    self.cur_frame[1] + 1 == len(self.frames[direction]):
+        if not self.death:
+            if self.cur_frame[0] == direction:
+                # print("in", self.cur_frame[1], direction)
+                if self.cur_frame[1] - 1 == len(self.frames[direction]) or \
+                        self.cur_frame[1] + 1 == len(self.frames[direction]):
+                    self.cur_frame = (direction, 0)
+
+                else:
+                    self.cur_frame = (direction, self.cur_frame[1] + 1)
+            else:
                 self.cur_frame = (direction, 0)
 
-            else:
-                self.cur_frame = (direction, self.cur_frame[1] + 1)
-        else:
-            self.cur_frame = (direction, 0)
+            # print("out", self.cur_frame[1], direction)
 
-        # print("out", self.cur_frame[1], direction)
-
-        self.image = self.frames[direction][self.cur_frame[1]]
+            self.image = self.frames[direction][self.cur_frame[1]]
 
     def a_star_pathfinding(self, level_walls, start_point, end_point, collision_images):
-        path = [start_point]
+        if not self.death:
+            path = [start_point]
 
-        # List of nodes algorithm had checked
-        closed_node_list = []
+            # List of nodes algorithm had checked
+            closed_node_list = []
 
-        window_width, window_height = pygame.display.get_surface().get_size()
-        counter = 0
+            window_width, window_height = pygame.display.get_surface().get_size()
+            counter = 0
 
-        # The algorithm stops when there are no blocks to check. This means there is no solution
-        # The amount of blocks is calculated by the formula - screen size divided by block size
-        while counter <= (window_width * window_height) // (self.size ** 2):
-            counter += 1
-            current_node = path[-1]
+            # The algorithm stops when there are no blocks to check. This means there is no solution
+            # The amount of blocks is calculated by the formula - screen size divided by block size
+            while counter <= (window_width * window_height) // (self.size ** 2):
+                counter += 1
+                current_node = path[-1]
 
-            # This is the amount the algorithm adds the coordinates of current node to find all adjacent nodes
-            # Node size depends on the Entity.size variable
-            possible_node_positions = [(0, -self.size), (0, self.size), (-self.size, 0), (self.size, 0),
-                                       (-self.size, -self.size), (-self.size, self.size), (self.size, -self.size),
-                                       (self.size, self.size)]
+                # This is the amount the algorithm adds the coordinates of current node to find all adjacent nodes
+                # Node size depends on the Entity.size variable
+                possible_node_positions = [(0, -self.size), (0, self.size), (-self.size, 0), (self.size, 0),
+                                           (-self.size, -self.size), (-self.size, self.size), (self.size, -self.size),
+                                           (self.size, self.size)]
 
-            # F value of the best node has to be high, in order to change to the best following node value
-            best_node_f = 1000000000000
-            best_node = current_node
+                # F value of the best node has to be high, in order to change to the best following node value
+                best_node_f = 1000000000000
+                best_node = current_node
 
-            # Going through the list of adjacent nodes to find the best one
-            for index, (x_coord, y_coord) in enumerate(possible_node_positions):
-                obstacle_in_node = False
+                # Going through the list of adjacent nodes to find the best one
+                for index, (x_coord, y_coord) in enumerate(possible_node_positions):
+                    obstacle_in_node = False
 
-                # Checking if the adjacent node has an obstacle in it
-                if index == 0:
-                    obstacle_in_node = any([any([pygame.sprite.collide_rect(collision_images[0], wall) for wall in
-                                                 wall_group]) for wall_group in level_walls])
-                elif index == 1:
-                    obstacle_in_node = any([any([pygame.sprite.collide_rect(collision_images[2], wall) for wall in
-                                                 wall_group]) for wall_group in level_walls])
-                elif index == 2:
-                    obstacle_in_node = any([any([pygame.sprite.collide_rect(collision_images[3], wall) for wall in
-                                                 wall_group]) for wall_group in level_walls])
-                elif index == 3:
-                    obstacle_in_node = any([any([pygame.sprite.collide_rect(collision_images[1], wall) for wall in
-                                                 wall_group]) for wall_group in level_walls])
-                elif index == 4:
-                    obstacle_in_node = any([any([any([pygame.sprite.collide_rect(collision_images[0], wall)
-                                                     for wall in wall_group]) for wall_group in level_walls]),
-                                           any([any([pygame.sprite.collide_rect(collision_images[3], wall)
-                                                     for wall in wall_group]) for wall_group in level_walls])])
-                elif index == 5:
-                    obstacle_in_node = any([any([any([pygame.sprite.collide_rect(collision_images[2], wall)
-                                                      for wall in wall_group]) for wall_group in level_walls]),
-                                            any([any([pygame.sprite.collide_rect(collision_images[3], wall)
-                                                      for wall in wall_group]) for wall_group in level_walls])])
-                elif index == 6:
-                    obstacle_in_node = any([any([any([pygame.sprite.collide_rect(collision_images[0], wall)
-                                                      for wall in wall_group]) for wall_group in level_walls]),
-                                            any([any([pygame.sprite.collide_rect(collision_images[1], wall)
-                                                      for wall in wall_group]) for wall_group in level_walls])])
-                elif index == 7:
-                    obstacle_in_node = any([any([any([pygame.sprite.collide_rect(collision_images[1], wall)
-                                                      for wall in wall_group]) for wall_group in level_walls]),
-                                            any([any([pygame.sprite.collide_rect(collision_images[2], wall)
-                                                      for wall in wall_group]) for wall_group in level_walls])])
+                    # Checking if the adjacent node has an obstacle in it
+                    if index == 0:
+                        obstacle_in_node = any([any([pygame.sprite.collide_rect(collision_images[0], wall) for wall in
+                                                     wall_group]) for wall_group in level_walls])
+                    elif index == 1:
+                        obstacle_in_node = any([any([pygame.sprite.collide_rect(collision_images[2], wall) for wall in
+                                                     wall_group]) for wall_group in level_walls])
+                    elif index == 2:
+                        obstacle_in_node = any([any([pygame.sprite.collide_rect(collision_images[3], wall) for wall in
+                                                     wall_group]) for wall_group in level_walls])
+                    elif index == 3:
+                        obstacle_in_node = any([any([pygame.sprite.collide_rect(collision_images[1], wall) for wall in
+                                                     wall_group]) for wall_group in level_walls])
+                    elif index == 4:
+                        obstacle_in_node = any([any([any([pygame.sprite.collide_rect(collision_images[0], wall)
+                                                         for wall in wall_group]) for wall_group in level_walls]),
+                                               any([any([pygame.sprite.collide_rect(collision_images[3], wall)
+                                                         for wall in wall_group]) for wall_group in level_walls])])
+                    elif index == 5:
+                        obstacle_in_node = any([any([any([pygame.sprite.collide_rect(collision_images[2], wall)
+                                                          for wall in wall_group]) for wall_group in level_walls]),
+                                                any([any([pygame.sprite.collide_rect(collision_images[3], wall)
+                                                          for wall in wall_group]) for wall_group in level_walls])])
+                    elif index == 6:
+                        obstacle_in_node = any([any([any([pygame.sprite.collide_rect(collision_images[0], wall)
+                                                          for wall in wall_group]) for wall_group in level_walls]),
+                                                any([any([pygame.sprite.collide_rect(collision_images[1], wall)
+                                                          for wall in wall_group]) for wall_group in level_walls])])
+                    elif index == 7:
+                        obstacle_in_node = any([any([any([pygame.sprite.collide_rect(collision_images[1], wall)
+                                                          for wall in wall_group]) for wall_group in level_walls]),
+                                                any([any([pygame.sprite.collide_rect(collision_images[2], wall)
+                                                          for wall in wall_group]) for wall_group in level_walls])])
 
-                # If there is no obstacle in the node, the player could go into it
-                if not obstacle_in_node:
-                    adjacent_node = current_node[0] + x_coord, current_node[1] + y_coord
+                    # If there is no obstacle in the node, the player could go into it
+                    if not obstacle_in_node:
+                        adjacent_node = current_node[0] + x_coord, current_node[1] + y_coord
 
-                    # If the node was already checked, it can't be the best one
-                    if adjacent_node not in closed_node_list:
-                        # Value of distance in nodes between the start node and the current node
-                        node_g_value = (len(path) - 1) * self.size
-                        # Value of estimated distance between the current node and the end node
-                        node_h_value = (adjacent_node[0] - end_point[0]) ** 2 + (adjacent_node[1] - end_point[1]) ** 2
-                        # Value of total cost of the node (G + H)
-                        node_f_value = node_g_value + node_h_value
+                        # If the node was already checked, it can't be the best one
+                        if adjacent_node not in closed_node_list:
+                            # Value of distance in nodes between the start node and the current node
+                            node_g_value = (len(path) - 1) * self.size
+                            # Value of estimated distance between the current node and the end node
+                            node_h_value = (adjacent_node[0] - end_point[0]) ** 2 + (adjacent_node[1] - end_point[1]) ** 2
+                            # Value of total cost of the node (G + H)
+                            node_f_value = node_g_value + node_h_value
 
-                        if node_f_value < best_node_f:
-                            closed_node_list.append(best_node)
+                            if node_f_value < best_node_f:
+                                closed_node_list.append(best_node)
 
-                            # Changing the best node
-                            best_node = adjacent_node
-                            best_node_f = node_f_value
-                        else:
-                            closed_node_list.append(adjacent_node)
+                                # Changing the best node
+                                best_node = adjacent_node
+                                best_node_f = node_f_value
+                            else:
+                                closed_node_list.append(adjacent_node)
 
-            path.append(best_node)
+                path.append(best_node)
 
-            if best_node not in closed_node_list:
-                # Checking if the best node contains the end_point
-                # If it does the algorithm found the path, if it doesn't algorithm continues searching
-                if (end_point[0] in range(best_node[0] - self.size, best_node[0] + self.size + 1)
-                        and end_point[1] in range(best_node[1] - self.size, best_node[1] + self.size + 1)):
+                if best_node not in closed_node_list:
+                    # Checking if the best node contains the end_point
+                    # If it does the algorithm found the path, if it doesn't algorithm continues searching
+                    if (end_point[0] in range(best_node[0] - self.size, best_node[0] + self.size + 1)
+                            and end_point[1] in range(best_node[1] - self.size, best_node[1] + self.size + 1)):
 
-                    path.append(end_point)
-                    return path
+                        path.append(end_point)
+                        return path
 
-            closed_node_list.append(best_node)
-        # If the path couldn't be found, function returns None
-        return None
+                closed_node_list.append(best_node)
+            # If the path couldn't be found, function returns None
+            return None
 
     def die(self):
         for i in range(7):
@@ -271,6 +275,7 @@ class Entity(pygame.sprite.Sprite):
                 self.update("death right")
             elif self.move_direction == "left":
                 self.update("death left")
+        self.death = True
 
 
 class Player(Entity):
@@ -337,34 +342,34 @@ class Player(Entity):
         функция возвращает перемещение по x и y
         так как двигаем мы canvas, а он главнее, чем игрок
         """
+        if not self.death:
+            # передвижение по оси y
+            y = x = 0
+            if keys[pygame.K_w]:
+                flag = not any([any([pygame.sprite.collide_rect(self.collision_images[0], wall) for wall in wall_group])
+                                for wall_group in level_walls])
+                if flag:
+                    y = self.speed_by_y
 
-        # передвижение по оси y
-        y = x = 0
-        if keys[pygame.K_w]:
-            flag = not any([any([pygame.sprite.collide_rect(self.collision_images[0], wall) for wall in wall_group])
-                            for wall_group in level_walls])
-            if flag:
-                y = self.speed_by_y
+            elif keys[pygame.K_s]:
+                flag = not any([any([pygame.sprite.collide_rect(self.collision_images[2], wall) for wall in wall_group])
+                                for wall_group in level_walls])
+                if flag:
+                    y = -self.speed_by_y
 
-        elif keys[pygame.K_s]:
-            flag = not any([any([pygame.sprite.collide_rect(self.collision_images[2], wall) for wall in wall_group])
-                            for wall_group in level_walls])
-            if flag:
-                y = -self.speed_by_y
+            # передвижение по оси x
+            if keys[pygame.K_a]:
+                flag = not any([any([pygame.sprite.collide_rect(self.collision_images[3], wall) for wall in wall_group])
+                                for wall_group in level_walls])
+                if flag:
+                    x = self.speed_by_x
 
-        # передвижение по оси x
-        if keys[pygame.K_a]:
-            flag = not any([any([pygame.sprite.collide_rect(self.collision_images[3], wall) for wall in wall_group])
-                            for wall_group in level_walls])
-            if flag:
-                x = self.speed_by_x
-
-        elif keys[pygame.K_d]:
-            flag = not any([any([pygame.sprite.collide_rect(self.collision_images[1], wall) for wall in wall_group])
-                            for wall_group in level_walls])
-            if flag:
-                x = -self.speed_by_x
-        return x, y
+            elif keys[pygame.K_d]:
+                flag = not any([any([pygame.sprite.collide_rect(self.collision_images[1], wall) for wall in wall_group])
+                                for wall_group in level_walls])
+                if flag:
+                    x = -self.speed_by_x
+            return x, y
 
     def move_with_mouse_click(self, level_walls):
         # List for the path written down in a form of (+- self.speed_by_x, +- self.speed_by_y)
@@ -416,13 +421,14 @@ class Player(Entity):
         return path_increments
 
     def attack_with_mouse_click(self, enemies):
-        if self.move_direction == "right":
-            self.update("beat right down")
-        elif self.move_direction == "left":
-            self.update("beat left down")
-        for enemy in enemies:
-            if pygame.sprite.collide_rect(self.damage_img, enemy):
-                enemy.get_damage(10)
+        if not self.death:
+            if self.move_direction == "right":
+                self.update("beat right down")
+            elif self.move_direction == "left":
+                self.update("beat left down")
+            for enemy in enemies:
+                if pygame.sprite.collide_rect(self.damage_img, enemy):
+                    enemy.get_damage(10)
 
 
 class BaseEnemy(Entity):
@@ -440,7 +446,7 @@ class BaseEnemy(Entity):
         self.direction = direction
         self.speed_by_y = self.speed_by_x = 5
 
-        self.vision = CollisionImage((x + self.size // 2, y + self.size // 2, int(self.size * 1.5)), shape="circle")
+        self.vision = CollisionImage((x - self.size // 2, y - self.size // 2, int(self.size * 3)), shape="circle")
 
     def move(self, level_walls, direction=None):
         self.direction = direction if direction is not None else self.direction
@@ -592,7 +598,6 @@ class HPBar(pygame.sprite.Sprite):
 
 class Orc(BaseEnemy):
     def __init__(self, position, name, health, group, direction):
-        print(position, name, health, group, direction)
         super().__init__(position, name, health, group, direction)
 
         self.rect = self.image.get_rect()
