@@ -266,7 +266,11 @@ class Entity(pygame.sprite.Sprite):
         return None
 
     def die(self):
-        pass
+        for i in range(7):
+            if self.move_direction == "right":
+                self.update("death right")
+            elif self.move_direction == "left":
+                self.update("death left")
 
 
 class Player(Entity):
@@ -293,14 +297,14 @@ class Player(Entity):
                           "beat right down": [(x, 3) for x in range(0, 10)],
                           "sweeping edge beat right": [(x, 4) for x in range(0, 8)],
                           "jump right": [(x, 5) for x in range(0, 10)],
-                          "fall from the portal right": [(x, 7) for x in range(0, 7)],
+                          "death right": [(x, 7) for x in range(0, 7)],
                           "look around left": [(x, 8) for x in range(0, 13)],
                           "move left": [(x, 9) for x in range(0, 8)],
                           "beat left up": [(x, 11) for x in range(0, 10)],
                           "beat left down": [(x, 12) for x in range(0, 10)],
                           "sweeping edge beat left": [(x, 13) for x in range(0, 8)],
                           "jump left": [(x, 14) for x in range(0, 6)],
-                          "fall from the portal left": [(x, 15) for x in range(0, 7)]}
+                          "death left": [(x, 15) for x in range(0, 7)]}
 
         spritesheet_img = self.load_image("player.png", "data\sprites\spritesheets\entities")
         self.animate(spritesheet_img, 13, 16, self.rect.x, self.rect.y, sp_description)
@@ -412,6 +416,10 @@ class Player(Entity):
         return path_increments
 
     def attack_with_mouse_click(self, enemies):
+        if self.move_direction == "right":
+            self.update("beat right down")
+        elif self.move_direction == "left":
+            self.update("beat left down")
         for enemy in enemies:
             if pygame.sprite.collide_rect(self.damage_img, enemy):
                 enemy.get_damage(10)
@@ -541,6 +549,10 @@ class BaseEnemy(Entity):
 
         else:
             player.get_damage(1)
+            if self.move_direction == "left":
+                self.update("beat left")
+            elif self.move_direction == "right":
+                self.update("beat right")
 
 
 class HPBar(pygame.sprite.Sprite):
@@ -592,10 +604,11 @@ class Orc(BaseEnemy):
                           "death right": [(x, 3) for x in range(0, 6)],
                           "look around left": [(x, 6) for x in range(0, 7)],
                           "move left": [(x, 7) for x in range(0, 8)],
-                          "beat left": [(x, 9) for x in range(0, 6)]}
+                          "beat left": [(x, 9) for x in range(0, 6)],
+                          "death left": [(x, 10) for x in range(0, 6)]}
 
         spritesheet_img = self.load_image('orc.png', 'data/sprites/spritesheets/entities/')
-        self.animate(spritesheet_img, 8, 11, self.rect.x, self.rect.y, sp_description)
+        self.animate(spritesheet_img, 8, 12, self.rect.x, self.rect.y, sp_description)
 
         self.rect.x -= 20
         self.rect.y -= 20
