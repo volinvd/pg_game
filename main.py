@@ -79,7 +79,6 @@ class MenuWidget(QMainWindow):
         self.third_level.setIcon(QIcon('data/menu_ui/Уровень3.png'))
         self.third_level.setIconSize(QSize(68, 70))
 
-
     def load_settings(self):
         pass
 

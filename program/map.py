@@ -215,6 +215,8 @@ class Canvas:
                 collision_img.rect.y += top
             enemy.hp_bar.rect.x += left
             enemy.hp_bar.rect.y += top
+            enemy.vision.rect.x += left
+            enemy.vision.rect.y += top
 
     def set_inventory_cell_position(self, event):
 

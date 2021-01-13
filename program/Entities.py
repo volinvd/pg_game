@@ -16,7 +16,7 @@ class CollisionImage(pygame.sprite.Sprite):
                                                                 size[2], size[3]])
             self.rect = pygame.Rect(size[0], size[1], size[2], size[3])
         elif shape == 'circle':
-            self.image = pygame.Surface((size[0] + size[2] * 2, size[1] + size[2] * 2))
+            self.image = pygame.Surface((size[0] + size[2] * 2, size[1] + size[2] * 2), pygame.SRCALPHA)
             pygame.draw.circle(self.image, pygame.Color("white"), (size[0], size[1]), size[2])
             self.rect = self.image.get_rect()
 
@@ -206,7 +206,8 @@ class Player(Entity):
                                  CollisionImage((x + 20, y + h + 10, w - 40, 10)),
                                  CollisionImage((x, y + 20, 10, h - 20))]
 
-        self.vision = CollisionImage((x + self.size // 2, y + self.size // 2, self.size), shape="circle")
+        self.vision = CollisionImage((x + self.size // 2, y + self.size // 2, self.size),
+                                     shape="circle", group=group)
 
         self.change_inventory_cell_position = False
         self.first_inventory_cell = self.second_inventory_cell = None
@@ -269,7 +270,8 @@ class BaseEnemy(Entity):
         self.direction = direction
         self.speed_by_y = self.speed_by_x = 5
 
-        self.vision = CollisionImage((x + self.size // 2, y + self.size // 2, int(self.size * 1.5)), shape="circle")
+        self.vision = CollisionImage((x + self.size // 2, y + self.size // 2, int(self.size * 1.5)),
+                                     shape="circle", group=group)
 
     def move(self, level_walls):
         if self.direction == 'up':
