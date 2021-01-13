@@ -87,7 +87,7 @@ class Canvas:
         :return:
         """
 
-        if keys is not None:
+        if keys is not None and not self.players[0].death:
             left, top = self.players[0].move_with_keyboard(keys, self.dictionary_of_levels_objects[self.current_level])
             self.change_padding(left, top)
 
@@ -99,7 +99,7 @@ class Canvas:
             self.animate_player_sprite(keys)
             self.animate_enemies_sprites()
 
-        elif mouse is not None:
+        elif mouse is not None and not self.players[0].death:
             path_increments = \
                 self.players[0].move_with_mouse_click(self.dictionary_of_levels_objects[self.current_level])
 

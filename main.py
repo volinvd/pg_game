@@ -14,6 +14,7 @@ def main(level):
     canvas = map.Canvas(level)
     running = True
     control_mode = 'keyboard'
+    k = 0
 
     while running:
         for event in pygame.event.get():
@@ -45,6 +46,10 @@ def main(level):
                 canvas.set_inventory_cell_position(event)
             if canvas.minimap.state == 'open':
                 canvas.set_minimap_position(event)
+            if event.type == pygame.MOUSEBUTTONUP:
+                if event.button == 1:
+                    canvas.players[0].attack_with_mouse_click(canvas.enemies[canvas.current_level])
+                    k = 4
 
         if control_mode == 'keyboard':
             keys = pygame.key.get_pressed()
@@ -55,14 +60,13 @@ def main(level):
                 Потом мы сдвигаем канвас на эти значения
                 """
                 canvas.update_player_coord(keys=keys)
-        mouse_clicked = pygame.mouse.get_pressed()[0]
-        if mouse_clicked:
-            """
-            Если есть нажатие клавиши мыши, вызывается метод передвижения игрока
-            Он возвращает перемещения по оси x и y
-            Потом мы сдвигаем канвас на эти значения
-            """
-            canvas.players[0].attack_with_mouse_click(canvas.enemies[canvas.current_level])
+
+        if k > 0:
+            if canvas.players[0].move_direction == "right":
+                canvas.players[0].update("beat right down")
+            elif canvas.players[0].move_direction == "left":
+                canvas.players[0].update("beat left down")
+            k -= 1
 
         canvas.screen.fill((200, 200, 200))
         canvas.render()
