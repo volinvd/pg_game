@@ -87,6 +87,9 @@ class MenuWidget(QMainWindow):
         self.settings.clicked.connect(self.load_settings)
         self.new_game.clicked.connect(self.load_base_levels)
 
+        self.back_to_menu.setIcon(QIcon('data/menu_ui/arrow.png'))
+        self.back_to_menu.setIconSize(QSize(72, 72))
+
         self.new_game.setIcon(QIcon('data/menu_ui/Начать.png'))
         self.new_game.setIconSize(QSize(238, 70))
 

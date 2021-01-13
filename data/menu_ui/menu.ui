@@ -162,41 +162,40 @@ color:transparent</string>
       <string notr="true">1</string>
      </property>
     </widget>
-   </widget>
-   <widget class="QPushButton" name="back_to_menu">
-    <property name="geometry">
-     <rect>
-      <x>32</x>
-      <y>32</y>
-      <width>72</width>
-      <height>70</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <family>MS Shell Dlg 2</family>
-      <pointsize>1</pointsize>
-      <kerning>false</kerning>
-     </font>
-    </property>
-    <property name="contextMenuPolicy">
-     <enum>Qt::NoContextMenu</enum>
-    </property>
-    <property name="layoutDirection">
-     <enum>Qt::LeftToRight</enum>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">background-color: &quot;#081c16&quot;;
+    <widget class="QPushButton" name="back_to_menu">
+     <property name="geometry">
+      <rect>
+       <x>160</x>
+       <y>20</y>
+       <width>72</width>
+       <height>70</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>MS Shell Dlg 2</family>
+       <pointsize>1</pointsize>
+       <kerning>false</kerning>
+      </font>
+     </property>
+     <property name="contextMenuPolicy">
+      <enum>Qt::NoContextMenu</enum>
+     </property>
+     <property name="layoutDirection">
+      <enum>Qt::LeftToRight</enum>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: &quot;transparent&quot;;
 color:transparent</string>
-    </property>
-    <property name="text">
-     <string notr="true">1</string>
-    </property>
+     </property>
+     <property name="text">
+      <string notr="true">1</string>
+     </property>
+    </widget>
    </widget>
    <zorder>label</zorder>
    <zorder>main_menu</zorder>
    <zorder>levels</zorder>
-   <zorder>back_to_menu</zorder>
   </widget>
  </widget>
  <resources/>
