@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.4" tiledversion="1.4.3" orientation="orthogonal" renderorder="right-down" width="56" height="34" tilewidth="16" tileheight="16" infinite="0" nextlayerid="18" nextobjectid="142">
+<map version="1.4" tiledversion="1.4.3" orientation="orthogonal" renderorder="right-down" width="56" height="34" tilewidth="16" tileheight="16" infinite="0" nextlayerid="17" nextobjectid="121">
  <tileset firstgid="1" name="goblinhouse" tilewidth="16" tileheight="16" tilecount="135" columns="9">
   <image source="../sprites/spritesheets/tiles/goblinhouse.png" width="150" height="250"/>
  </tileset>
@@ -21,7 +21,7 @@
    eJztmDkLwjAUxz02dfKYPD6Ajoq7x+QBQlcHFRxUcBDBC7+7/0K61DaR2uQl5f3gR3P0tY82CWlzOYZhXGD4R1uWcfUZ5GEBFqkTSUhT0V+CZVgxkIstdGGPOgmN9OGAOglGCy6smUw8qwQxsndu03i4Goqh4i3pC7+HoC6LCagmS8c6arAOG6I+JcxFBy3Yhh1RX2q4x1ocg/GzgZ4oe19np8NE03Wj2IfqBwP3XCj605p//l77HGq7KGLi1g1bucE7fMAnfIn2LdxRJWWAIzxRJ2Exsu/7ERxHlNNG9a2rixmcR5QpMbGnyMq+xcf1/zwqsvaf55e5nqXxyTCMm3wA2zwSFQ==
   </data>
  </layer>
- <objectgroup id="2" name="walls" visible="0">
+ <objectgroup id="2" name="walls">
   <object id="52" name="wall" x="160" y="287.875" width="5" height="144.188"/>
   <object id="55" name="wall" x="164.813" y="416" width="187.188" height="16"/>
   <object id="57" name="wall" x="347" y="384.063" width="5" height="31.8125"/>
@@ -55,7 +55,7 @@
   <object id="94" name="wall" x="117.083" y="64" width="256.038" height="16"/>
   <object id="95" name="wall" x="367.97" y="79.9697" width="144.03" height="16.1515"/>
  </objectgroup>
- <objectgroup id="10" name="objects" visible="0">
+ <objectgroup id="10" name="objects">
   <object id="96" name="table" x="182" y="298" width="10.0909" height="38.0356"/>
   <object id="97" name="table" x="182" y="336" width="68" height="9.875"/>
   <object id="98" name="table" x="240.125" y="297.875" width="9.875" height="38"/>
@@ -70,25 +70,5 @@
   <object id="111" name="stairs" x="431.909" y="207.909" width="16.1818" height="16.1818"/>
   <object id="112" name="decorative_ax" x="256.938" y="290.938" width="13.0625" height="9.125"/>
   <object id="113" name="decorative_ax" x="288.719" y="291" width="13.0625" height="9.125"/>
- </objectgroup>
- <objectgroup id="17" name="воздух">
-  <object id="123" name="air" x="-1.42109e-14" y="-0.333333" width="897.03" height="64.1515"/>
-  <object id="124" name="air" x="0.227333" y="63.9242" width="112.212" height="112.485"/>
-  <object id="126" name="air" x="-0.106" y="176.591" width="416.212" height="110.818"/>
-  <object id="127" name="air" x="368.561" y="160.591" width="89.5453" height="14.8181"/>
-  <object id="128" name="air" x="358.561" y="287.258" width="101.545" height="30.8181"/>
-  <object id="129" name="air" x="415.227" y="271.924" width="44.212" height="15.4848"/>
-  <object id="130" name="air" x="0.227333" y="288.258" width="159.545" height="141.818"/>
-  <object id="131" name="air" x="-0.772667" y="495.834" width="897.06" height="48.9086"/>
-  <object id="132" name="air" x="352.561" y="399.924" width="111.212" height="31.4843"/>
-  <object id="133" name="air" x="-1.106" y="446.924" width="593.212" height="49.151"/>
-  <object id="134" name="air" x="-0.606" y="431.425" width="464.212" height="16.151"/>
-  <object id="135" name="air" x="752.03" y="352.243" width="144.394" height="143.666"/>
-  <object id="136" name="air" x="517.894" y="319.425" width="106.212" height="48.151"/>
-  <object id="137" name="air" x="624.394" y="352.425" width="127.303" height="15.151"/>
-  <object id="138" name="air" x="783.894" y="63.9245" width="112.985" height="288.287"/>
-  <object id="139" name="air" x="517.394" y="64.0495" width="266.212" height="143.901"/>
-  <object id="140" name="air" x="515.394" y="208.425" width="108.712" height="31.651"/>
-  <object id="141" name="air" x="372.519" y="64.1745" width="144.587" height="15.651"/>
  </objectgroup>
 </map>
