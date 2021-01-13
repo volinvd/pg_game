@@ -473,8 +473,88 @@ class BaseEnemy(Entity):
     def player_in_vision(self, player_vision):
         return pygame.sprite.collide_circle(self.vision, player_vision)
 
-    def chase_player(self):
-        pass
+    def chase_player(self, level_walls, player_coords):
+        path = Entity.a_star_pathfinding(self, level_walls,
+                                         (self.rect.x + self.size // 2, self.rect.y + self.size // 2),
+                                         player_coords, self.collision_images)
+
+        # If the algorithm found the path we divide given path by increments equal to self.speed_by_x/y
+        if path is not None:
+
+            # Going through the path list
+            for index, (current_node_x, current_node_y) in enumerate(path[:-1]):
+                next_node_x, next_node_y = path[index + 1][0], path[index + 1][1]
+
+                # Getting the amount of increments by finding distance between current
+                # and next node and dividing it by self.speed_by_x
+                amount_of_increments = round(round(((current_node_x - next_node_x) ** 2 +
+                                                    (current_node_y - next_node_y) ** 2) ** 0.5) // self.speed_by_x)
+                # Dividing our path into increments
+                for _ in range(amount_of_increments):
+                    if current_node_x + self.size == next_node_x and current_node_y + self.size == next_node_y:
+                        self.rect.y += self.speed_by_y
+                        self.rect.x += self.speed_by_x
+
+                        for collision_img in self.collision_images:
+                            collision_img.rect.y += self.speed_by_y
+                            collision_img.rect.x += self.speed_by_x
+                        self.hp_bar.rect.y += self.speed_by_y
+                        self.vision.rect.x += self.speed_by_x
+                    elif current_node_x + self.size == next_node_x and current_node_y - self.size == next_node_y:
+                        self.rect.y -= self.speed_by_y
+                        self.rect.x += self.speed_by_x
+
+                        for collision_img in self.collision_images:
+                            collision_img.rect.y -= self.speed_by_y
+                            collision_img.rect.x += self.speed_by_x
+                        self.hp_bar.rect.y -= self.speed_by_y
+                        self.vision.rect.x += self.speed_by_x
+                    elif current_node_x - self.size == next_node_x and current_node_y + self.size == next_node_y:
+                        self.rect.y += self.speed_by_y
+                        self.rect.x -= self.speed_by_x
+
+                        for collision_img in self.collision_images:
+                            collision_img.rect.y += self.speed_by_y
+                            collision_img.rect.x -= self.speed_by_x
+                        self.hp_bar.rect.y += self.speed_by_y
+                        self.vision.rect.x -= self.speed_by_x
+                    elif current_node_x - self.size == next_node_x and current_node_y - self.size == next_node_y:
+                        self.rect.y -= self.speed_by_y
+                        self.rect.x -= self.speed_by_x
+
+                        for collision_img in self.collision_images:
+                            collision_img.rect.y -= self.speed_by_y
+                            collision_img.rect.x -= self.speed_by_x
+                        self.hp_bar.rect.y -= self.speed_by_y
+                        self.vision.rect.x -= self.speed_by_x
+                    elif current_node_x + self.size == next_node_x:
+                        self.rect.x += self.speed_by_x
+
+                        for collision_img in self.collision_images:
+                            collision_img.rect.x += self.speed_by_x
+                        self.hp_bar.rect.x += self.speed_by_x
+                        self.vision.rect.x += self.speed_by_x
+                    elif current_node_x - self.size == next_node_x:
+                        self.rect.x -= self.speed_by_x
+
+                        for collision_img in self.collision_images:
+                            collision_img.rect.x -= self.speed_by_x
+                        self.hp_bar.rect.x -= self.speed_by_x
+                        self.vision.rect.x -= self.speed_by_x
+                    elif current_node_y + self.size == next_node_y:
+                        self.rect.y += self.speed_by_y
+
+                        for collision_img in self.collision_images:
+                            collision_img.rect.y += self.speed_by_y
+                        self.hp_bar.rect.y += self.speed_by_y
+                        self.vision.rect.y += self.speed_by_y
+                    elif current_node_y - self.size == next_node_y:
+                        self.rect.y -= self.speed_by_y
+
+                        for collision_img in self.collision_images:
+                            collision_img.rect.y -= self.speed_by_y
+                        self.hp_bar.rect.y -= self.speed_by_y
+                        self.vision.rect.y -= self.speed_by_y
 
 
 class HPBar(pygame.sprite.Sprite):

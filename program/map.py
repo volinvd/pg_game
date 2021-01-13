@@ -92,7 +92,8 @@ class Canvas:
             self.animate_enemies_sprites()
 
         elif mouse is not None:
-            path_increments = self.players[0].move_with_mouse_click(self.dictionary_of_levels_objects[1])
+            path_increments = \
+                self.players[0].move_with_mouse_click(self.dictionary_of_levels_objects[self.current_level])
 
             # Going through the list and using the function change_padding to move the player
             for left, top in path_increments:
@@ -192,7 +193,7 @@ class Canvas:
                 if not enemy.player_in_vision(self.players[0].vision):
                     enemy.move(self.dictionary_of_levels_objects[self.current_level])
                 else:
-                    pass
+                    enemy.chase_player(self.dictionary_of_levels_objects[self.current_level], self.players[0].rect)
 
         self.screen.blit(screen, (0, 0))
 
