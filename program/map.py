@@ -55,20 +55,37 @@ class Canvas:
                 'air': Air,
             }
 
-        self.dictionary_of_levels_objects = {}
-        self.dictionary_of_levels_objects[level] = \
-            [[self.dictionary_of_types[obj.name](obj, self.tile_width, self.level_map.tilewidth)
-              for obj in object_groups if self.dictionary_of_types[obj.name]]
-             for object_groups in self.level_map.objectgroups]
+        self.dictionary_of_levels_objects = {
+            level: [[self.dictionary_of_types[obj.name](obj, self.tile_width, self.level_map.tilewidth)
+                     for obj in object_groups if self.dictionary_of_types[obj.name]]
+                    for object_groups in self.level_map.objectgroups]}
 
-        self.enemies = \
-            [
-                Entities.Orc((2935, 2570), 'enemy', 100, self.enemy_sprites, 'up'),
-                Entities.Orc((4000, 2570), 'enemy', 100, self.enemy_sprites, 'up'),
-                Entities.Orc((1935, 2570), 'enemy', 100, self.enemy_sprites, 'up')
-            ]
+        self.enemies = {
+            1:
+                [
+                    Entities.Orc((2935, 2570), 'enemy', 100, self.enemy_sprites, 'up'),
+                    Entities.Orc((4000, 2570), 'enemy', 100, self.enemy_sprites, 'up'),
+                    Entities.Orc((1935, 2570), 'enemy', 100, self.enemy_sprites, 'up')
+                ],
+            2:
+                [
+                    Entities.Orc((2935, 2570), 'enemy', 100, self.enemy_sprites, 'up'),
+                    Entities.Orc((4000, 2570), 'enemy', 100, self.enemy_sprites, 'up'),
+                    Entities.Orc((1935, 2000), 'enemy', 100, self.enemy_sprites, 'up')
+                ],
+            3:
+                [
+                    Entities.Orc((2935, 2570), 'enemy', 100, self.enemy_sprites, 'up'),
+                    Entities.Orc((4000, 2570), 'enemy', 100, self.enemy_sprites, 'up'),
+                    Entities.Orc((1935, 2570), 'enemy', 100, self.enemy_sprites, 'up')
+                ]
+        }
         self.pets = []
-        self.change_padding(-100, -100)
+        self.minimap = MiniMap(self.level_map, self.players[0], self.window_size)
+        dict_of_changing_padding = {1: (-100, -100),
+                                    2: (-200, -200),
+                                    3: (-100, -100)}
+        self.change_padding(*dict_of_changing_padding[self.current_level])
 
     def update_player_coord(self, keys=None, mouse=None):
 
@@ -186,15 +203,14 @@ class Canvas:
         self.enemy_sprites.draw(screen)
         self.player_sprites.draw(screen)
 
-        if self.players[0].inventory_state == 'open':
-            self.inventory_group.draw(screen)
-        else:
-            for enemy in self.enemies:
-                if not enemy.player_in_vision(self.players[0].vision):
+        if self.minimap.state == 'base':
+            if self.players[0].inventory_state == 'open':
+                self.inventory_group.draw(screen)
+            else:
+                for enemy in self.enemies[self.current_level]:
                     enemy.move(self.dictionary_of_levels_objects[self.current_level])
-                else:
-                    enemy.chase_player(self.dictionary_of_levels_objects[self.current_level], self.players[0].rect)
 
+        self.minimap.render(screen)
         self.screen.blit(screen, (0, 0))
 
     def change_padding(self, left=0, top=0):
@@ -284,6 +300,46 @@ class Canvas:
             self.players[0].first_inventory_cell.base_position = self.players[0].first_inventory_cell.rect.x, self.players[0].first_inventory_cell.rect.y
             self.players[0].second_inventory_cell.base_position = \
                 self.players[0].second_inventory_cell.rect.x, self.players[0].second_inventory_cell.rect.y
+    
+    def set_minimap_position(self, event):
+
+        """
+        :param event: какое-либо событие
+        :return: просто прирывает выполнение функции
+        """
+
+        if event.type == pygame.MOUSEBUTTONDOWN and self.minimap.state == 'open':
+            if event.button == 4:
+                self.minimap.koef += 1
+            if event.button == 5:
+                self.minimap.koef -= 1
+            self.minimap.koef = 20 if self.minimap.koef > 20 else self.minimap.koef
+            self.minimap.koef = 1 if self.minimap.koef < 1 else self.minimap.koef
+        if event.type == pygame.MOUSEWHEEL and self.minimap.state == 'open':
+            self.minimap.koef += event.y
+            self.minimap.koef = 20 if self.minimap.koef > 20 else self.minimap.koef
+            self.minimap.koef = 1 if self.minimap.koef < 1 else self.minimap.koef
+
+        # начало смены координат миникарты
+        if self.minimap.koef >= 6:
+            if event.type == pygame.MOUSEBUTTONDOWN and not self.minimap.change_position:
+
+                mouse_coord = event.pos
+
+                self.minimap.difference_x = mouse_coord[0]
+                self.minimap.difference_y = mouse_coord[1]
+                self.minimap.change_position = True
+
+            # передвижение клетки
+            if event.type == pygame.MOUSEMOTION and self.minimap.change_position:
+                self.minimap.change_padding(event.pos[0] - self.minimap.difference_x,
+                                            event.pos[1] - self.minimap.difference_y)
+                self.minimap.difference_x = event.pos[0]
+                self.minimap.difference_y = event.pos[1]
+
+            # конец смены координат клетки
+            if event.type == pygame.MOUSEBUTTONUP and self.minimap.change_position:
+                self.minimap.change_position = False
 
 
 class Obstacle:
@@ -341,3 +397,107 @@ class DecorativeAx(Obstacle):
 
 class Air(Obstacle):
     pass
+
+
+class MiniMap:
+    def __init__(self, level_map, player, screen_size):
+        self.level_map = level_map
+        self.player = player
+        self.left_padding, self.top_padding = 0, 0
+        self.left_player_padding, self.top_player_padding = 0, 0
+        self.tile_width = 5
+        self.koef = 1
+        self.state = 'base'
+        self.difference_x = 0
+        self.difference_y = 0
+        self.change_position = False
+        self.size = 0, 0
+        self.screen_size = screen_size
+
+    def render(self, screen):
+        """
+        Пробегается по видимым слоям текущего уровня и отрисовывает их на экране
+        """
+        if self.state == 'base':
+            screen_2 = pygame.Surface((500 * round(self.koef), 300 * round(self.koef)), pygame.SRCALPHA)
+            # фон для миникарты
+            pygame.draw.rect(screen_2, (51, 51, 51, 200), (0, 0,
+                                                           500 * round(self.koef), 300 * round(self.koef)))
+            max_x = max_y = 0
+            for layer in self.level_map.visible_layers:
+                if layer.__class__.__name__ == 'TiledTileLayer':
+                    for x, y, gid in layer:
+
+                        """
+                        вот тут меняй цвет для миникарты
+                        """
+
+                        if gid == 6:
+                            pygame.draw.rect(screen_2, '#a9a9a9', (x * self.tile_width * round(self.koef),
+                                                                   y * self.tile_width * round(self.koef),
+                                                                   self.tile_width * round(self.koef),
+                                                                   self.tile_width * round(self.koef)))
+                        if x > max_x:
+                            max_x = x
+                        if y > max_y:
+                            max_y = y
+            x, y = (self.screen_size[0] - max_x * self.tile_width * round(self.koef),
+                    self.screen_size[1] - max_y * self.tile_width * round(self.koef))
+
+            screen.blit(screen_2, (x - 2, y - 2))
+            x, y, w, h = (-self.left_player_padding // 20 + x + self.player.rect.x // 32 * 5 - self.screen_size[0] // 20,
+                          -self.top_player_padding // 20 + y + self.player.rect.y // 32 * 5 - self.screen_size[1] // 20,
+                          self.player.rect.w // 32 * 5, self.player.rect.h // 32 * 5)
+            pygame.draw.rect(screen, 'blue', [x - 2, y - 2, w * round(self.koef), h * round(self.koef)])
+        else:
+
+            screen_2 = pygame.Surface(self.screen_size, pygame.SRCALPHA)
+            if self.koef < 6:
+                self.left_padding = self.top_padding = 0
+            max_x = max_y = 0
+            for layer in self.level_map.visible_layers:
+                if layer.__class__.__name__ == 'TiledTileLayer':
+                    for x, y, gid in layer:
+
+                        """
+                        layer - картеж вида (0, 0, 0), где первые 2 числа координаты по x и y, 
+                        последняя индекс слоя, на котором мы и находим картинку
+                        """
+                        tile = self.level_map.get_tile_image_by_gid(gid)
+                        if tile is not None:
+                            tile = pygame.transform.scale(tile,
+                                                          (self.tile_width * round(self.koef), self.tile_width * round(self.koef)))
+                            screen_2.blit(tile, (self.left_padding + x * self.tile_width * round(self.koef),
+                                                 self.top_padding + y * self.tile_width * round(self.koef)))
+                        if x > max_x:
+                            max_x = x
+                        if y > max_y:
+                            max_y = y
+
+            left = self.screen_size[0] - max_x * round(self.koef) * self.tile_width
+            top = self.screen_size[1] - max_y * round(self.koef) * self.tile_width
+            left //= 2
+            top //= 2
+            left = 2 if left < 0 else left
+            top = 2 if top < 0 else top
+            screen.blit(screen_2, (left, top))
+            pygame.draw.rect(screen, 'red', [left, top, (max_x + 1) * round(self.koef) * self.tile_width,
+                                             (max_y + 1) * round(self.koef) * self.tile_width], 2)
+            self.size = max_x * round(self.koef) * self.tile_width, max_y * round(self.koef) * self.tile_width
+
+    def change_padding(self, left=0, top=0):
+
+        """
+        эта функция сдвигает все клетки по оси x на left или по оси y на top
+        """
+
+        self.left_padding += left
+        self.top_padding += top
+        self.left_padding = 0 if self.left_padding > 0 else self.left_padding
+        self.top_padding = 0 if self.top_padding > 0 else self.top_padding
+
+        self.left_padding = -(self.size[0] - self.screen_size[0]) \
+            if self.left_padding < -(self.size[0] - self.screen_size[0]) else self.left_padding
+
+        self.top_padding = -(self.size[1] - self.screen_size[1]) \
+            if self.top_padding < -(self.size[1] - self.screen_size[1]) else self.top_padding
