@@ -154,21 +154,23 @@ class Entity(pygame.sprite.Sprite):
         # print(self.sp_description)
 
     def update(self, direction=None):
-        if self.death and type(self) == Player:
+
+        if self.death:
             if self.move_direction == "right":
                 direction = "death right"
             elif self.move_direction == "left":
                 direction = "death left"
-        if self.attack_state and type(self) == Player and not self.death:
+
+        if self.attack_state and not self.death:
             if self.move_direction == "right":
-                direction = "beat right down"
+                direction = "beat right"
             elif self.move_direction == "left":
-                direction = "beat left down"
+                direction = "beat left"
 
         if self.cur_frame[0] == direction:
             # print("in", self.cur_frame[1], direction)
             if (self.cur_frame[1] - 1 == len(self.frames[direction]) or
-                    self.cur_frame[1] + 1 == len(self.frames[direction])) and not self.death and not self.attack_state:
+                    self.cur_frame[1] + 1 == len(self.frames[direction])) and not self.death:
                 self.cur_frame = (direction, 0)
 
             else:
@@ -318,14 +320,14 @@ class Player(Entity):
         sp_description = {"look around right": [(x, 0) for x in range(0, 13)],
                           "move right": [(x, 1) for x in range(0, 8)],
                           "beat right up": [(x, 2) for x in range(0, 10)],
-                          "beat right down": [(x, 3) for x in range(0, 10)],
+                          "beat right": [(x, 3) for x in range(0, 10)],
                           "sweeping edge beat right": [(x, 4) for x in range(0, 8)],
                           "jump right": [(x, 5) for x in range(0, 10)],
                           "death right": [(x, 7) for x in range(0, 7)],
                           "look around left": [(x, 8) for x in range(0, 13)],
                           "move left": [(x, 9) for x in range(0, 8)],
                           "beat left up": [(x, 11) for x in range(0, 10)],
-                          "beat left down": [(x, 12) for x in range(0, 10)],
+                          "beat left": [(x, 12) for x in range(0, 10)],
                           "sweeping edge beat left": [(x, 13) for x in range(0, 8)],
                           "jump left": [(x, 14) for x in range(0, 6)],
                           "death left": [(x, 15) for x in range(0, 7)]}
@@ -442,9 +444,9 @@ class Player(Entity):
     def attack_with_mouse_click(self, enemies):
         if not self.death and not self.attack_state:
             if self.move_direction == "right":
-                self.update("beat right down")
+                self.update("beat right")
             elif self.move_direction == "left":
-                self.update("beat left down")
+                self.update("beat left")
             self.attack_state = True
             for enemy in enemies:
                 if pygame.sprite.collide_rect(self.damage_img, enemy):
@@ -469,57 +471,60 @@ class BaseEnemy(Entity):
         self.vision = CollisionImage((x - self.size // 2, y - self.size // 2, int(self.size * 3)), shape="circle")
 
     def move(self, level_walls, direction=None):
-        self.direction = direction if direction is not None else self.direction
-        self.speed_by_x = 17 if direction is not None else 5
-        self.speed_by_y = 17 if direction is not None else 5
-        if self.direction == 'up':
-            flag = not any([any([pygame.sprite.collide_rect(self.collision_images[0], wall) for wall in wall_group])
-                            for wall_group in level_walls])
-            if flag:
-                self.rect.y -= self.speed_by_y
-                for collision_img in self.collision_images:
-                    collision_img.rect.y -= self.speed_by_y
-                self.hp_bar.rect.y -= self.speed_by_y
-                self.vision.rect.y -= self.speed_by_y
-            else:
-                self.direction = 'right'
-            self.move_direction = "right"
-        elif self.direction == 'right':
-            flag = not any([any([pygame.sprite.collide_rect(self.collision_images[1], wall) for wall in wall_group])
-                            for wall_group in level_walls])
-            if flag:
-                self.rect.x += self.speed_by_x
-                for collision_img in self.collision_images:
-                    collision_img.rect.x += self.speed_by_x
-                self.hp_bar.rect.x += self.speed_by_x
-                self.vision.rect.x += self.speed_by_x
-            else:
-                self.direction = 'down'
-            self.move_direction = "right"
-        elif self.direction == 'down':
-            flag = not any([any([pygame.sprite.collide_rect(self.collision_images[2], wall) for wall in wall_group])
-                            for wall_group in level_walls])
-            if flag:
-                self.rect.y += self.speed_by_y
-                for collision_img in self.collision_images:
-                    collision_img.rect.y += self.speed_by_y
-                self.hp_bar.rect.y += self.speed_by_y
-                self.vision.rect.y += self.speed_by_y
-            else:
-                self.direction = 'left'
-            self.move_direction = "left"
-        elif self.direction == 'left':
-            flag = not any([any([pygame.sprite.collide_rect(self.collision_images[3], wall) for wall in wall_group])
-                            for wall_group in level_walls])
-            if flag:
-                self.rect.x -= self.speed_by_x
-                for collision_img in self.collision_images:
-                    collision_img.rect.x -= self.speed_by_x
-                self.hp_bar.rect.x -= self.speed_by_x
-                self.vision.rect.x -= self.speed_by_x
-            else:
-                self.direction = 'up'
-            self.move_direction = "left"
+        if not self.death:
+            self.direction = direction if direction is not None else self.direction
+            self.speed_by_x = 17 if direction is not None else 5
+            self.speed_by_y = 17 if direction is not None else 5
+            if self.direction == 'up':
+                flag = not any([any([pygame.sprite.collide_rect(self.collision_images[0], wall) for wall in wall_group])
+                                for wall_group in level_walls])
+                if flag:
+                    self.rect.y -= self.speed_by_y
+                    for collision_img in self.collision_images:
+                        collision_img.rect.y -= self.speed_by_y
+                    self.hp_bar.rect.y -= self.speed_by_y
+                    self.vision.rect.y -= self.speed_by_y
+                else:
+                    self.direction = 'right'
+                self.move_direction = "right"
+            elif self.direction == 'right':
+                flag = not any([any([pygame.sprite.collide_rect(self.collision_images[1], wall) for wall in wall_group])
+                                for wall_group in level_walls])
+                if flag:
+                    self.rect.x += self.speed_by_x
+                    for collision_img in self.collision_images:
+                        collision_img.rect.x += self.speed_by_x
+                    self.hp_bar.rect.x += self.speed_by_x
+                    self.vision.rect.x += self.speed_by_x
+                else:
+                    self.direction = 'down'
+                self.move_direction = "right"
+            elif self.direction == 'down':
+                flag = not any([any([pygame.sprite.collide_rect(self.collision_images[2], wall) for wall in wall_group])
+                                for wall_group in level_walls])
+                if flag:
+                    self.rect.y += self.speed_by_y
+                    for collision_img in self.collision_images:
+                        collision_img.rect.y += self.speed_by_y
+                    self.hp_bar.rect.y += self.speed_by_y
+                    self.vision.rect.y += self.speed_by_y
+                else:
+                    self.direction = 'left'
+                self.move_direction = "left"
+            elif self.direction == 'left':
+                flag = not any([any([pygame.sprite.collide_rect(self.collision_images[3], wall) for wall in wall_group])
+                                for wall_group in level_walls])
+                if flag:
+                    self.rect.x -= self.speed_by_x
+                    for collision_img in self.collision_images:
+                        collision_img.rect.x -= self.speed_by_x
+                    self.hp_bar.rect.x -= self.speed_by_x
+                    self.vision.rect.x -= self.speed_by_x
+                else:
+                    self.direction = 'up'
+                self.move_direction = "left"
+        else:
+            self.update()
 
     def player_in_vision(self, player_vision):
         return pygame.sprite.collide_circle(self.vision, player_vision)
@@ -574,7 +579,7 @@ class BaseEnemy(Entity):
                             break
 
         else:
-            if not self.attack_state:
+            if not self.attack_state and not self.death:
                 player.get_damage(10)
             if self.move_direction == "left":
                 self.update("beat left")

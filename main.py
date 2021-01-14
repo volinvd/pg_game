@@ -63,9 +63,9 @@ def main(level):
 
         if k > 0:
             if canvas.players[0].move_direction == "right":
-                canvas.players[0].update("beat right down")
+                canvas.players[0].update("beat right")
             elif canvas.players[0].move_direction == "left":
-                canvas.players[0].update("beat left down")
+                canvas.players[0].update("beat left")
             k -= 1
 
         canvas.screen.fill((200, 200, 200))

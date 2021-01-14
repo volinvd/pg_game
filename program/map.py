@@ -177,13 +177,13 @@ class Canvas:
         """
         Пробегается по видимым слоям текущего уровня и отрисовывает их на экране
         """
-        length = len(self.enemies[self.current_level])
+        '''length = len(self.enemies[self.current_level])
         self.enemies[self.current_level] = [enemy for enemy in self.enemies[self.current_level] if enemy.health > 0]
         if len(self.enemies[self.current_level]) != length:
             self.enemy_sprites = pygame.sprite.Group()
             for enemy in self.enemies[self.current_level]:
                 self.enemy_sprites.add(enemy)
-                self.enemy_sprites.add(enemy.hp_bar)
+                self.enemy_sprites.add(enemy.hp_bar)'''
         if self.players[0].health <= 0:
             self.players[0].die()
         screen = self.screen.copy()
@@ -212,6 +212,7 @@ class Canvas:
                 for enemy in self.enemies[self.current_level]:
                     if enemy.attack_state:
                         enemy.tick += 1
+                        enemy.update()
                         if enemy.tick == 30:
                             enemy.tick = 0
                             enemy.attack_state = False
