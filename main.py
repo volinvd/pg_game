@@ -15,8 +15,12 @@ def main(level):
     running = True
     control_mode = 'keyboard'
     k = 0
+    player_death_number = 60
 
     while running:
+        if canvas.players[0].death:
+            player_death_number -= 1
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
@@ -71,6 +75,10 @@ def main(level):
         canvas.screen.fill((200, 200, 200))
         canvas.render()
         pygame.display.flip()
+        if player_death_number < 0:
+            running = False
+            global menu
+            menu.setVisible(True)
     pygame.quit()
 
 
@@ -133,7 +141,7 @@ class MenuWidget(QMainWindow):
         self.main_menu.show()
 
     def load_game_level(self):
-        self.close()
+        self.setVisible(False)
         main(int(self.sender().text()))
 
 
@@ -141,6 +149,7 @@ def except_hook(cls, exception, traceback):
     sys.__excepthook__(cls, exception, traceback)
 
 
+menu = None
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     menu = MenuWidget()
