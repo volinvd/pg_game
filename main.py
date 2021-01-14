@@ -61,9 +61,10 @@ def main(level):
                 canvas.screen = canvas.set_screen("change_size_type")
 
             if event.type == pygame.KEYUP and event.key == pygame.K_ESCAPE:
-                running = False
                 global menu
                 menu.setVisible(True)
+                pygame.quit()
+                return
 
             if event.type == pygame.KEYUP and \
                     (event.key == pygame.K_e or event.key == pygame.K_i) and canvas.minimap.state == 'base':
@@ -182,6 +183,7 @@ class MenuWidget(QMainWindow):
         self.main_menu.show()
 
     def load_game_level(self):
+        print(self.sender())
         self.setVisible(False)
         main(int(self.sender().text()))
 
