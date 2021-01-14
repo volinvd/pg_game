@@ -86,26 +86,29 @@ class Canvas:
         :param mouse: клик мышки
         :return:
         """
-
-        if keys is not None and not self.players[0].death:
-            left, top = self.players[0].move_with_keyboard(keys, self.dictionary_of_levels_objects[self.current_level])
-            self.change_padding(left, top)
-
-            if keys[pygame.K_d]:
-                self.players[0].move_direction = "right"
-            elif keys[pygame.K_a]:
-                self.players[0].move_direction = "left"
-
-            self.animate_player_sprite(keys)
-            self.animate_enemies_sprites()
-
-        elif mouse is not None and not self.players[0].death:
-            path_increments = \
-                self.players[0].move_with_mouse_click(self.dictionary_of_levels_objects[self.current_level])
-
-            # Going through the list and using the function change_padding to move the player
-            for left, top in path_increments:
+        self.animate_enemies_sprites()
+        if self.players[0].death:
+            self.players[0].update()
+        else:
+            if keys is not None:
+                left, top = self.players[0].move_with_keyboard(keys,
+                                                               self.dictionary_of_levels_objects[self.current_level])
                 self.change_padding(left, top)
+
+                if keys[pygame.K_d]:
+                    self.players[0].move_direction = "right"
+                elif keys[pygame.K_a]:
+                    self.players[0].move_direction = "left"
+
+                self.animate_player_sprite(keys)
+
+            elif mouse is not None and not self.players[0].death:
+                path_increments = \
+                    self.players[0].move_with_mouse_click(self.dictionary_of_levels_objects[self.current_level])
+
+                # Going through the list and using the function change_padding to move the player
+                for left, top in path_increments:
+                    self.change_padding(left, top)
 
     def animate_player_sprite(self, keys):
         if not keys[pygame.K_w] and not keys[pygame.K_a] and not keys[pygame.K_s] and not keys[pygame.K_d]:
@@ -181,6 +184,8 @@ class Canvas:
             for enemy in self.enemies[self.current_level]:
                 self.enemy_sprites.add(enemy)
                 self.enemy_sprites.add(enemy.hp_bar)
+        if self.players[0].health <= 0:
+            self.players[0].die()
         screen = self.screen.copy()
         for layer in self.level_map.visible_layers:
             if layer.__class__.__name__ == 'TiledTileLayer':
@@ -197,19 +202,28 @@ class Canvas:
                                            y * self.tile_width + self.top_padding))
 
         self.pet_sprites.draw(screen)
-        self.enemy_sprites.draw(screen)
         self.player_sprites.draw(screen)
+        self.enemy_sprites.draw(screen)
 
         if self.minimap.state == 'base':
             if self.players[0].inventory_state == 'open':
                 self.inventory_group.draw(screen)
             else:
                 for enemy in self.enemies[self.current_level]:
+                    if enemy.attack_state:
+                        enemy.tick += 1
+                        if enemy.tick == 30:
+                            enemy.tick = 0
+                            enemy.attack_state = False
                     if not enemy.player_in_vision(self.players[0].vision):
                         enemy.move(self.dictionary_of_levels_objects[self.current_level])
                     else:
                         enemy.chase_player(self.dictionary_of_levels_objects[self.current_level], self.players[0])
-
+        if self.players[0].attack_state:
+            self.players[0].tick += 1
+            if self.players[0].tick == 7:
+                self.players[0].tick = 0
+                self.players[0].attack_state = False
         self.minimap.render(screen)
         self.screen.blit(screen, (0, 0))
 
@@ -430,11 +444,7 @@ class MiniMap:
                 if layer.__class__.__name__ == 'TiledTileLayer':
                     for x, y, gid in layer:
 
-                        """
-                        вот тут меняй цвет для миникарты
-                        """
-
-                        if gid == 6:
+                        if layer.name == 'пол' and gid in (4, 6):
                             pygame.draw.rect(screen_2, '#a9a9a9', (x * self.tile_width * round(self.koef),
                                                                    y * self.tile_width * round(self.koef),
                                                                    self.tile_width * round(self.koef),

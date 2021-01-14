@@ -104,6 +104,8 @@ class Entity(pygame.sprite.Sprite):
         self.size = 120
 
         self.hp_bar = HPBar((position[0] + 20, position[1], 80, 8), group)
+        self.attack_state = False
+        self.tick = 0
 
     def get_damage(self, damage):
         if not self.death:
@@ -151,22 +153,39 @@ class Entity(pygame.sprite.Sprite):
         # print(self.frames)
         # print(self.sp_description)
 
-    def update(self, direction):
-        if not self.death:
-            if self.cur_frame[0] == direction:
-                # print("in", self.cur_frame[1], direction)
-                if self.cur_frame[1] - 1 == len(self.frames[direction]) or \
-                        self.cur_frame[1] + 1 == len(self.frames[direction]):
-                    self.cur_frame = (direction, 0)
+    def update(self, direction=None):
+        if self.death and type(self) == Player:
+            if self.move_direction == "right":
+                direction = "death right"
+            elif self.move_direction == "left":
+                direction = "death left"
+        if self.attack_state and type(self) == Player and not self.death:
+            if self.move_direction == "right":
+                direction = "beat right down"
+            elif self.move_direction == "left":
+                direction = "beat left down"
 
-                else:
-                    self.cur_frame = (direction, self.cur_frame[1] + 1)
-            else:
+        if self.cur_frame[0] == direction:
+            # print("in", self.cur_frame[1], direction)
+            if (self.cur_frame[1] - 1 == len(self.frames[direction]) or
+                    self.cur_frame[1] + 1 == len(self.frames[direction])) and not self.death and not self.attack_state:
                 self.cur_frame = (direction, 0)
 
-            # print("out", self.cur_frame[1], direction)
+            else:
+                if not self.death:
+                    self.cur_frame = (direction, self.cur_frame[1] + 1)
+                else:
+                    self.cur_frame = (direction, self.cur_frame[1] + 0.3)
+        else:
+            if not self.death and not self.attack_state:
+                self.cur_frame = (direction, 0)
 
-            self.image = self.frames[direction][self.cur_frame[1]]
+        # print("out", self.cur_frame[1], direction)
+
+        try:
+            self.image = self.frames[direction][int(self.cur_frame[1])]
+        except IndexError:
+            pass
 
     def a_star_pathfinding(self, level_walls, start_point, end_point, collision_images):
         if not self.death:
@@ -270,12 +289,12 @@ class Entity(pygame.sprite.Sprite):
             return None
 
     def die(self):
-        for i in range(7):
-            if self.move_direction == "right":
-                self.update("death right")
-            elif self.move_direction == "left":
-                self.update("death left")
+        if self.move_direction == "right":
+            self.update("death right")
+        elif self.move_direction == "left":
+            self.update("death left")
         self.death = True
+        self.attack_state = False
 
 
 class Player(Entity):
@@ -421,11 +440,12 @@ class Player(Entity):
         return path_increments
 
     def attack_with_mouse_click(self, enemies):
-        if not self.death:
+        if not self.death and not self.attack_state:
             if self.move_direction == "right":
                 self.update("beat right down")
             elif self.move_direction == "left":
                 self.update("beat left down")
+            self.attack_state = True
             for enemy in enemies:
                 if pygame.sprite.collide_rect(self.damage_img, enemy):
                     enemy.get_damage(10)
@@ -554,11 +574,13 @@ class BaseEnemy(Entity):
                             break
 
         else:
-            player.get_damage(1)
+            if not self.attack_state:
+                player.get_damage(10)
             if self.move_direction == "left":
                 self.update("beat left")
             elif self.move_direction == "right":
                 self.update("beat right")
+            self.attack_state = True
 
 
 class HPBar(pygame.sprite.Sprite):
