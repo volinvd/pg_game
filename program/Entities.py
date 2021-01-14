@@ -116,7 +116,6 @@ class Entity(pygame.sprite.Sprite):
                 self.die()
 
     def load_image(self, name, directory, color_key=None):
-
         fullname = os.path.join(directory, name)
         image = pygame.image.load(fullname)
 
@@ -316,6 +315,7 @@ class Player(Entity):
 
         self.rect = self.image.get_rect()
         self.rect.x, self.rect.y = position
+        self.rect.w, self.rect.h = 120, 120
 
         sp_description = {"look around right": [(x, 0) for x in range(0, 13)],
                           "move right": [(x, 1) for x in range(0, 8)],
@@ -451,6 +451,10 @@ class Player(Entity):
             for enemy in enemies:
                 if pygame.sprite.collide_rect(self.damage_img, enemy):
                     enemy.get_damage(10)
+
+    def heal(self):
+        self.health = 100
+        self.hp_bar.change_width(100)
 
 
 class BaseEnemy(Entity):
@@ -604,14 +608,22 @@ class HPBar(pygame.sprite.Sprite):
         self.rect.y += y
 
     def change_width(self, damage):
-        size = self.rect.x, self.rect.y, self.rect.w, self.rect.h
-        if len([item for item in size if item > 0]) == 4:
-            self.image = pygame.Surface((self.max_hp, size[3]), pygame.SRCALPHA)
+        if damage != 100:
+            size = self.rect.x, self.rect.y, self.rect.w, self.rect.h
+            if len([item for item in size if item > 0]) == 4:
+                self.image = pygame.Surface((self.max_hp, size[3]), pygame.SRCALPHA)
+                pygame.draw.rect(self.image, pygame.Color("#68d37b"), [0, 0,
+                                                                       size[2] - damage, size[3]])
+                pygame.draw.rect(self.image, pygame.Color("black"), [0, 0,
+                                                                     self.max_hp, size[3]], 1)
+                self.rect = pygame.Rect(size[0], size[1], size[2] - damage, size[3])
+        else:
+            self.image = pygame.Surface((self.max_hp, 8), pygame.SRCALPHA)
             pygame.draw.rect(self.image, pygame.Color("#68d37b"), [0, 0,
-                                                                   size[2] - damage, size[3]])
+                                                                   self.max_hp, 8])
             pygame.draw.rect(self.image, pygame.Color("black"), [0, 0,
-                                                                 self.max_hp, size[3]], 1)
-            self.rect = pygame.Rect(size[0], size[1], size[2] - damage, size[3])
+                                                                 self.max_hp, 8], 1)
+            self.rect = pygame.Rect(self.rect.x, self.rect.y, self.max_hp, 8)
 
     def change_pos(self, size):
         self.image = pygame.Surface((size[2], size[3]), pygame.SRCALPHA)

@@ -37,6 +37,7 @@ class Canvas:
         self.pet_sprites = pygame.sprite.Group()
         self.enemy_sprites = pygame.sprite.Group()
         self.inventory_group = pygame.sprite.Group()
+        self.medicine_chest_group = pygame.sprite.Group()
 
         self.left_padding, self.top_padding = 0, 0
 
@@ -53,7 +54,8 @@ class Canvas:
                 'bed': Bed,
                 'decorative_ax': DecorativeAx,
                 'air': Air,
-                'enemy': ''
+                'enemy': '',
+                'medicine_chest': ''
             }
 
         self.dictionary_of_levels_objects = {
@@ -70,12 +72,17 @@ class Canvas:
         self.enemies = {
             level: level_enemies
         }
+        self.medicine_chest = [[MedicineChest(obj, 50, self.level_map.tilewidth, self.medicine_chest_group)
+                                for obj in object_groups if obj.name == 'medicine_chest']
+                               for object_groups in self.level_map.objectgroups]
+        self.medicine_chest = [[ap for ap in ap_list if ap]
+                               for ap_list in self.medicine_chest if ap_list][0]
 
         self.pets = []
         self.minimap = MiniMap(self.level_map, self.players[0], self.window_size)
         dict_of_changing_padding = {1: (-100, -100),
                                     2: (-200, -200),
-                                    3: (-100, -100)}
+                                    3: (-200, -200)}
         self.change_padding(*dict_of_changing_padding[self.current_level])
 
     def update_player_coord(self, keys=None, mouse=None):
@@ -187,6 +194,7 @@ class Canvas:
                     self.enemy_sprites.add(enemy.hp_bar)
         if self.players[0].health <= 0:
             self.players[0].die()
+
         screen = self.screen.copy()
         for layer in self.level_map.visible_layers:
             if layer.__class__.__name__ == 'TiledTileLayer':
@@ -205,6 +213,7 @@ class Canvas:
         self.pet_sprites.draw(screen)
         self.player_sprites.draw(screen)
         self.enemy_sprites.draw(screen)
+        self.medicine_chest_group.draw(screen)
 
         if self.minimap.state == 'base':
             if self.players[0].inventory_state == 'open':
@@ -256,6 +265,20 @@ class Canvas:
             enemy.hp_bar.rect.y += top
             enemy.vision.rect.x += left
             enemy.vision.rect.y += top
+
+        for ap in self.medicine_chest:
+            ap.rect.x += left
+            ap.rect.y += top
+            if pygame.sprite.collide_rect(ap, self.players[0].vision):
+                ap.is_use = True
+                self.players[0].heal()
+
+        length = len(self.medicine_chest)
+        self.medicine_chest = [ap for ap in self.medicine_chest if not ap.is_use]
+        if len(self.medicine_chest) != length:
+            self.medicine_chest_group = pygame.sprite.Group()
+            for ap in self.medicine_chest:
+                self.medicine_chest_group.add(ap)
 
     def set_inventory_cell_position(self, event):
 
@@ -516,3 +539,38 @@ class MiniMap:
 
         self.top_padding = -(self.size[1] - self.screen_size[1]) \
             if self.top_padding < -(self.size[1] - self.screen_size[1]) else self.top_padding
+
+
+class MedicineChest(pygame.sprite.Sprite):
+    def __init__(self, obj, tile_size, base_tile_width, group):
+
+        """
+        :param obj: это объект, реаизованый в карте, из него берутся свойства, начальные координаты и т.д.
+        :param tile_size: - размер клетки, он фиксирован и равен 100
+        :param base_tile_width: - базовый размер тайла, то есть самой картинки (32*32)
+        self.rect и self.image нужны для проверки столкновений со стеной
+        """
+        super().__init__(group)
+        self.x = int(obj.x * tile_size * 2 / base_tile_width)
+        self.y = int(obj.y * tile_size * 2 / base_tile_width)
+        self.width = int(obj.width * tile_size / base_tile_width)
+        self.height = int(obj.height * tile_size / base_tile_width)
+        self.tile_size = tile_size
+        self.obj = obj
+        self.is_use = False
+
+        self.image = self.load_image('medicine_chest.png', 'data/sprites/')
+        self.image = pygame.transform.scale(self.image, (tile_size, tile_size))
+        self.rect = self.image.get_rect()
+        self.rect.x = self.x
+        self.rect.y = self.y
+
+    def load_image(self, name, directory, color_key=None):
+        fullname = os.path.join(directory, name)
+        image = pygame.image.load(fullname)
+
+        if color_key is not None:
+            if color_key == -1:
+                color_key = image.get_at((0, 0))
+            image.set_colorkey(color_key)
+        return image

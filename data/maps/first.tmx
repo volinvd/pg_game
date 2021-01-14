@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.4" tiledversion="1.4.3" orientation="orthogonal" renderorder="right-down" width="60" height="40" tilewidth="16" tileheight="16" infinite="0" nextlayerid="7" nextobjectid="86">
+<map version="1.4" tiledversion="1.4.3" orientation="orthogonal" renderorder="right-down" width="60" height="40" tilewidth="16" tileheight="16" infinite="0" nextlayerid="7" nextobjectid="89">
  <tileset firstgid="1" name="dungetileset" tilewidth="16" tileheight="16" tilecount="90" columns="10">
   <image source="../sprites/spritesheets/tiles/dungetileset.png" width="160" height="144"/>
  </tileset>
@@ -264,5 +264,8 @@
   <object id="82" name="enemy" x="661.5" y="211.5" width="15" height="15"/>
   <object id="83" name="enemy" x="727.5" y="75.5" width="15" height="15"/>
   <object id="84" name="enemy" x="505.5" y="113.5" width="15" height="15"/>
+  <object id="86" name="medicine_chest" x="390" y="255" width="15" height="15"/>
+  <object id="87" name="medicine_chest" x="128.25" y="345.25" width="15" height="15"/>
+  <object id="88" name="medicine_chest" x="781.833" y="113.167" width="15" height="15"/>
  </objectgroup>
 </map>
