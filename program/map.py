@@ -559,9 +559,10 @@ class MedicineChest(pygame.sprite.Sprite):
         self.obj = obj
         self.is_use = False
 
-        self.image = self.load_image('medicine_chest.png', 'data/sprites/')
-        self.image = pygame.transform.scale(self.image, (tile_size, tile_size))
-        self.rect = self.image.get_rect()
+        self.image = self.load_image('dungetileset.png', 'data/sprites/spritesheets/tiles/')
+        single_image = self.image.subsurface((48, 112, 16, 16))
+        self.image = pygame.transform.scale(single_image, (tile_size, tile_size))
+        self.rect = single_image.get_rect()
         self.rect.x = self.x
         self.rect.y = self.y
 
