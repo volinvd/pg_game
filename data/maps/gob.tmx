@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.4" tiledversion="1.4.3" orientation="orthogonal" renderorder="right-down" width="56" height="34" tilewidth="16" tileheight="16" infinite="0" nextlayerid="17" nextobjectid="121">
+<map version="1.4" tiledversion="1.4.3" orientation="orthogonal" renderorder="right-down" width="56" height="34" tilewidth="16" tileheight="16" infinite="0" nextlayerid="18" nextobjectid="129">
  <tileset firstgid="1" name="goblinhouse" tilewidth="16" tileheight="16" tilecount="135" columns="9">
   <image source="../sprites/spritesheets/tiles/goblinhouse.png" width="150" height="250"/>
  </tileset>
@@ -8,7 +8,12 @@
  </tileset>
  <layer id="11" name="фон" width="56" height="34">
   <data encoding="base64" compression="zlib">
-   eJzt1UEOgCAMRNFuvP8RuCo3MBKw06F/8ZdqXwNxRMQgIkru2Uw9/9++6jvA19v35b1KX8be1LPgWzfhe3+m4o7w3elz/4dmWNUeB9/Jb1a8f/i87w6+Xr6MXeHzOAtuvlN+9Zz4evqIujQBVF+L1A==
+   eJztmcEOhDAIRLn4/3vv0X7onpqYxlaEGbC7HiZu1FUepRBwF5H9j1Runm+qynOrqHa/R3xXjFfXe7+WybVXz1QBrtXxOZtTHjtYexfJ5/FB45vtP6+i+KrochFakXztGJkTWbE3u4fNF+E/VA5aja/ff8i6wOaz1hB2ztHk5yLXvp7xjf4XUWc9/tTUUsuaM/msPliNb7aOZ/HGrqGWmGLF7qp8WmXyoWzSPgvxTkSMvXy+2IqaO4z6FDZftiL4MudFrP2H8M0niW80Q8yObUScjOYnT+Br9nn6r7NeDh0rHrajfZYZlqdvy869/boW0fWADD5tbln5W0gmn7UfRttwx47aHX9NWfNmi77wh6EO
+  </data>
+ </layer>
+ <layer id="17" name="пол" width="56" height="34">
+  <data encoding="base64" compression="zlib">
+   eJzt1TEKwCAQRFEb73/ltBaBCDtsxvE/sFT5C+IYANBvFpe7ap/7DOi7u2/n3ET0ncfx/SnRt7/HcUbpfaukP/QNff19yjsd35965vT1ou+uPuVZHbNJ71NK7/tCH30A/vcAvfgI0A==
   </data>
  </layer>
  <layer id="12" name="стены" width="56" height="34">
@@ -70,5 +75,13 @@
   <object id="111" name="stairs" x="431.909" y="207.909" width="16.1818" height="16.1818"/>
   <object id="112" name="decorative_ax" x="256.938" y="290.938" width="13.0625" height="9.125"/>
   <object id="113" name="decorative_ax" x="288.719" y="291" width="13.0625" height="9.125"/>
+  <object id="121" name="enemy" x="495" y="99" width="15" height="15"/>
+  <object id="122" name="enemy" x="333.833" y="306.833" width="15" height="15"/>
+  <object id="123" name="enemy" x="728.5" y="462.5" width="15" height="15"/>
+  <object id="124" name="enemy" x="639.5" y="226.167" width="15" height="15"/>
+  <object id="125" name="enemy" x="433.167" y="238.167" width="15" height="15"/>
+  <object id="126" name="medicine_chest" x="472.318" y="217.045" width="15" height="15"/>
+  <object id="127" name="medicine_chest" x="687.5" y="284.5" width="15" height="15"/>
+  <object id="128" name="medicine_chest" x="665.5" y="422.5" width="15" height="15"/>
  </objectgroup>
 </map>
