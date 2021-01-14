@@ -8,6 +8,32 @@ from PyQt5.QtCore import QSize
 from program import map
 
 
+def load_image(name, directory, color_key=None):
+    fullname = os.path.join(directory, name)
+    image = pygame.image.load(fullname)
+
+    if color_key is not None:
+        if color_key == -1:
+            color_key = image.get_at((0, 0))
+        image.set_colorkey(color_key)
+    return image
+
+
+class Message(pygame.sprite.Sprite):
+    def __init__(self, filename, directory, screen_size, group):
+        super().__init__(group)
+        self.image = load_image(filename, directory)
+        self.rect = self.image.get_rect()
+        self.rect.x = 0
+        self.rect.y = (screen_size[1] - self.rect.h) // 2
+        self.screen_size = screen_size
+
+    def update_coord(self):
+
+        if self.rect.x < (self.screen_size[0] - self.rect.w) // 2:
+            self.rect.x += 10
+
+
 def main(level):
     pygame.init()
 
@@ -16,9 +42,15 @@ def main(level):
     control_mode = 'keyboard'
     k = 0
     player_death_number = 60
-
+    win = False
+    message_group = pygame.sprite.Group()
+    message = None
     while running:
-        if canvas.players[0].death:
+        if canvas.players[0].death and player_death_number > 0:
+            player_death_number -= 1
+
+        if all([enemy.death for enemy in canvas.enemies[canvas.current_level]]) and player_death_number > 0:
+            win = True
             player_death_number -= 1
 
         for event in pygame.event.get():
@@ -29,7 +61,9 @@ def main(level):
                 canvas.screen = canvas.set_screen("change_size_type")
 
             if event.type == pygame.KEYUP and event.key == pygame.K_ESCAPE:
-                canvas.screen = canvas.set_screen("window_size")
+                running = False
+                global menu
+                menu.setVisible(True)
 
             if event.type == pygame.KEYUP and \
                     (event.key == pygame.K_e or event.key == pygame.K_i) and canvas.minimap.state == 'base':
@@ -74,11 +108,18 @@ def main(level):
 
         canvas.screen.fill((200, 200, 200))
         canvas.render()
+
+        if player_death_number <= 0 and message is None:
+            file_name = 'you_win.png' if win else 'gameover.png'
+            directory = 'data/sprites/'
+
+            message = Message(file_name, directory, canvas.window_size, message_group)
+            player_death_number = 1
+        if message is not None:
+            message.update_coord()
+            message_group.draw(canvas.screen)
+
         pygame.display.flip()
-        if player_death_number < 0:
-            running = False
-            global menu
-            menu.setVisible(True)
     pygame.quit()
 
 
